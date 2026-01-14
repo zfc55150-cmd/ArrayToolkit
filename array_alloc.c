@@ -2,25 +2,25 @@
 
 int* get_array(int* len)
 {
-	printf("ÇëÊäÈëÒ»Î¬Êı×éµÄ³¤¶È£º\n");
+	printf("è¯·è¾“å…¥ä¸€ç»´æ•°ç»„çš„é•¿åº¦ï¼š\n");
 	get_int(len);
 
 	while (*len <= 0)
 	{
-		printf("³¤¶È±ØĞë´óÓÚ0£¬ÇëÖØĞÂÊäÈë£º\n");
+		printf("é•¿åº¦å¿…é¡»å¤§äº0ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 		get_int(len);
 	}
 
-	printf("ÇëÊäÈë%d¸öÕûÊı£º\n", *len);
+	printf("è¯·è¾“å…¥%dä¸ªæ•´æ•°ï¼š\n", *len);
 
 	int* arr = (int*)malloc((size_t)(*len) * sizeof(int));
 	if (arr == NULL)
 	{
-		fprintf(stderr, "ÄÚ´æ·ÖÅäÊ§°Ü\n");
+		fprintf(stderr, "å†…å­˜åˆ†é…å¤±è´¥\n");
 		return NULL;
 	}
 
-	// Ô¤Áô×ã¹»µÄ×Ö·û£ºÃ¿¸öint×î¶àÔ¼11×Ö·û(º¬·ûºÅ) + ¿Õ¸ñ£»ÔÙ¼Ó»»ĞĞºÍ\0
+	// é¢„ç•™è¶³å¤Ÿçš„å­—ç¬¦ï¼šæ¯ä¸ªintæœ€å¤šçº¦11å­—ç¬¦(å«ç¬¦å·) + ç©ºæ ¼ï¼›å†åŠ æ¢è¡Œå’Œ\0
 	size_t cap = (size_t)(*len) * 12 + 2;
 
 	int flag;
@@ -29,7 +29,7 @@ int* get_array(int* len)
 		char* buf = (char*)malloc(cap);
 		if (buf == NULL)
 		{
-			fprintf(stderr, "ÄÚ´æ·ÖÅäÊ§°Ü\n");
+			fprintf(stderr, "å†…å­˜åˆ†é…å¤±è´¥\n");
 			free(arr);
 			return NULL;
 		}
@@ -40,7 +40,7 @@ int* get_array(int* len)
 
 		if (fgets(buf, (int)cap, stdin) == NULL)
 		{
-			printf("Ã»ÓĞ¼ì²âµ½ÊäÈë,ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰æ£€æµ‹åˆ°è¾“å…¥,è¯·é‡æ–°è¾“å…¥ï¼š\n");
 			free(buf);
 			flag = 1;
 			continue;
@@ -49,7 +49,7 @@ int* get_array(int* len)
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
-			printf("Ã»ÓĞÊäÈëÓĞĞ§Êı¾İ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰è¾“å…¥æœ‰æ•ˆæ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			free(buf);
 			flag = 1;
 			continue;
@@ -62,9 +62,9 @@ int* get_array(int* len)
 				flag = 1;
 				p = skip_allspaces(p);
 				if (*p == '\0')
-					printf("ÊäÈëµÄÓĞĞ§Êı¾İ²»¹»£¬ÇëÖØĞÂÊäÈë£º\n");
+					printf("è¾“å…¥çš„æœ‰æ•ˆæ•°æ®ä¸å¤Ÿï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 				else
-					printf("ÊäÈëÖĞÓĞÎ¥¹æÊäÈë£¬ÇëÖØĞÂÊäÈë£º\n");
+					printf("è¾“å…¥ä¸­æœ‰è¿è§„è¾“å…¥ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 				break;
 			}
 			p += used;
@@ -75,7 +75,7 @@ int* get_array(int* len)
 			p = skip_allspaces(p);
 			if (*p != '\0')
 			{
-				printf("ÊäÈëÊı¾İ¹ı¶à,ÇëÖØĞÂÊäÈë%d¸öÊı×Ö£º\n", *len);
+				printf("è¾“å…¥æ•°æ®è¿‡å¤š,è¯·é‡æ–°è¾“å…¥%dä¸ªæ•°å­—ï¼š\n", *len);
 				flag = 1;
 			}
 		}
@@ -85,4 +85,4 @@ int* get_array(int* len)
 	} while (flag);
 
 	return arr;
-}                                 //»ñÈ¡Ò»¸ö×Ô¶¨Òå³¤¶ÈµÄÒ»Î¬Êı×é
+}                                 //è·å–ä¸€ä¸ªè‡ªå®šä¹‰é•¿åº¦çš„ä¸€ç»´æ•°ç»„

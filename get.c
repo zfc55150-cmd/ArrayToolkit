@@ -7,7 +7,7 @@ char* skip_midspaces(char* x)
 		x++;
 	}
 	return x;
-}                       //Ìø¹ı¿Õ¸ñºÍTab¼ü
+}                       //è·³è¿‡ç©ºæ ¼å’ŒTabé”®
 
 char* skip_allspaces(char* x)
 {
@@ -16,7 +16,7 @@ char* skip_allspaces(char* x)
 		x++;
 	}
 	return x;
-}                       //Ìø¹ı¿Õ¸ñ¡¢Tab¼üºÍ»Ø³µ¼ü
+}                       //è·³è¿‡ç©ºæ ¼ã€Tabé”®å’Œå›è½¦é”®
 
 void get_int(int* a)
 {
@@ -28,18 +28,18 @@ void get_int(int* a)
 
 		if (fgets(buf, sizeof(buf), stdin) == NULL)
 		{
-			printf("Ã»ÓĞ¼ì²âµ½ÊäÈë£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰æ£€æµ‹åˆ°è¾“å…¥ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
-			printf("Ã»ÓĞÊäÈëÓĞĞ§Êı¾İ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰è¾“å…¥æœ‰æ•ˆæ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		if (sscanf(p, "%d%n", a, &used) != 1)
 		{
-			printf("ÊäÈëÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("è¾“å…¥æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		else
@@ -47,13 +47,13 @@ void get_int(int* a)
 			p = skip_allspaces(p + used);
 			if (*p != '\0')
 			{
-				printf("ÊäÈëÖµÌ«¶àÁË£¬ÇëÖØĞÂÊäÈë:\n");
+				printf("è¾“å…¥å€¼å¤ªå¤šäº†ï¼Œè¯·é‡æ–°è¾“å…¥:\n");
 				continue;
 			}
 			break;
 		}
 	}
-}                                       //»ñÈ¡Ò»¸öÕûÊı
+}                                       //è·å–ä¸€ä¸ªæ•´æ•°
 
 void get_char(char* x)
 {
@@ -65,18 +65,18 @@ void get_char(char* x)
 
 		if (fgets(buf, sizeof(buf), stdin) == NULL)
 		{
-			printf("Ã»ÓĞ¼ì²âµ½ÊäÈë£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰æ£€æµ‹åˆ°è¾“å…¥ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
-			printf("Ã»ÓĞÊäÈëÓĞĞ§Êı¾İ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰è¾“å…¥æœ‰æ•ˆæ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		if (sscanf(p, "%c%n", x, &used) != 1)
 		{
-			printf("ÊäÈëÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("è¾“å…¥æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			continue;
 		}
 		else
@@ -84,20 +84,20 @@ void get_char(char* x)
 			p = skip_allspaces(p + used);
 			if (*p != '\0')
 			{
-				printf("ÊäÈëÖµ²»¸É¾»£¬ÇëÖØĞÂÊäÈë:\n");
+				printf("è¾“å…¥å€¼ä¸å¹²å‡€ï¼Œè¯·é‡æ–°è¾“å…¥:\n");
 				continue;
 			}
 			break;
 		}
 	}
-}                                       //ÓÃÀ´»ñÈ¡Ò»¸ö×Ö·û
+}                                       //ç”¨æ¥è·å–ä¸€ä¸ªå­—ç¬¦
 
 void get_twochoice(char* x)
 {
 	get_char(x);
 	while (*x != 'A' && *x != 'B' && *x != 'a' && *x != 'b')
 	{
-		printf("ÊäÈëÓĞÎÊÌâ£¬ÇëÖØĞÂÑ¡Ôñ£¨A/a»òÕßB/b£©£º\n");
+		printf("è¾“å…¥æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°é€‰æ‹©ï¼ˆA/aæˆ–è€…B/bï¼‰ï¼š\n");
 		get_char(x);
 	}
-}                                      //ÓÃÀ´×ö»ñÈ¡ÓÃ»§µÄ¶şÑ¡Ò»
+}                                      //ç”¨æ¥åšè·å–ç”¨æˆ·çš„äºŒé€‰ä¸€

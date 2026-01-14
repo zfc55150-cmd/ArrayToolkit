@@ -7,7 +7,7 @@ void print_array(int* arr, int a)
 	{
 		printf("%d\t", arr[x]);
 	}
-}                                 //´òÓ¡Ò»Î¬Êı×é
+}                                 //æ‰“å°ä¸€ç»´æ•°ç»„
 
 void reverse_array(int* arr, int len)
 {
@@ -18,12 +18,12 @@ void reverse_array(int* arr, int len)
 		arr[x] = arr[len - 1 - x];
 		arr[len - 1 - x] = temp;
 	}
-}                                //ÄæĞòÒ»Î¬Êı×é
+}                                //é€†åºä¸€ç»´æ•°ç»„
 
 void bubble_sort(int* arr, int len)
 {
 	char choice;
-	printf("ÇëÑ¡ÔñÉıĞò»¹ÊÇ½µĞò\nA/a£ºÉıĞò\nB/b£º½µĞò\n");
+	printf("è¯·é€‰æ‹©å‡åºè¿˜æ˜¯é™åº\nA/aï¼šå‡åº\nB/bï¼šé™åº\n");
 	get_twochoice(&choice);
 
 	if (choice == 'A' || choice == 'a')
@@ -58,27 +58,27 @@ void bubble_sort(int* arr, int len)
 			}
 		}
 	}
-}                                          //Á½ÖÖÃ°ÅİÅÅĞò£¬ÉıĞòºÍ½µĞò
+}                                          //ä¸¤ç§å†’æ³¡æ’åºï¼Œå‡åºå’Œé™åº
 
 void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 {
-	printf("ÇëÊäÈë¶şÎ¬Êı×éÓĞ¼¸ĞĞ£º\n");
+	printf("è¯·è¾“å…¥äºŒç»´æ•°ç»„æœ‰å‡ è¡Œï¼š\n");
 	get_int(row);
 	while (*row > MAX_M || *row <= 0)
 	{
-		printf("ÊäÈëµÄĞĞÊıÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£º\n");
+		printf("è¾“å…¥çš„è¡Œæ•°æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 		get_int(row);
 	}
 
-	printf("ÇëÊäÈë¶şÎ¬Êı×éÓĞ¼¸ÁĞ£º\n");
+	printf("è¯·è¾“å…¥äºŒç»´æ•°ç»„æœ‰å‡ åˆ—ï¼š\n");
 	get_int(col);
 	while (*col > MAX_M || *col <= 0)
 	{
-		printf("ÊäÈëµÄÁĞÊıÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£¨0£¬50]£º\n");
+		printf("è¾“å…¥çš„åˆ—æ•°æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼ˆ0ï¼Œ50]ï¼š\n");
 		get_int(col);
 	}
 
-	printf("ÇëÊäÈë%d¸öÕûÊı£º\n", (*col) * (*row));
+	printf("è¯·è¾“å…¥%dä¸ªæ•´æ•°ï¼š\n", (*col) * (*row));
 	int flag, total;
 	total = *col * *row;
 
@@ -92,14 +92,14 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 
 		if (fgets(buf, sizeof(buf), stdin) == NULL)
 		{
-			printf("Î´¼ì²âµ½ÊäÈë£¬ÇëÖØĞÂÊäÈë\n");
+			printf("æœªæ£€æµ‹åˆ°è¾“å…¥ï¼Œè¯·é‡æ–°è¾“å…¥\n");
 			flag = 1;
 			continue;
 		}
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
-			printf("Ã»ÓĞÊäÈëÓĞĞ§Êı¾İ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("æ²¡æœ‰è¾“å…¥æœ‰æ•ˆæ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			flag = 1;
 			continue;
 		}
@@ -112,12 +112,12 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 				p = skip_allspaces(p);
 				if (*p == '\0')
 				{
-					printf("ÊäÈëµÄÓĞĞ§Êı¾İ²»¹»£¬ÇëÖØĞÂÊäÈë\n");
+					printf("è¾“å…¥çš„æœ‰æ•ˆæ•°æ®ä¸å¤Ÿï¼Œè¯·é‡æ–°è¾“å…¥\n");
 					break;
 				}
 				else
 				{
-					printf("ÊäÈëÖĞÓĞÎ¥¹æÊı¾İ£¬ÇëÖØĞÂÊäÈë£º\n");
+					printf("è¾“å…¥ä¸­æœ‰è¿è§„æ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 					break;
 				}
 			}
@@ -136,14 +136,14 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 			p = skip_allspaces(p);
 			if (*p != '\0')
 			{
-				printf("ÊäÈëÊı¾İ¹ı¶à£¬ÇëÖØĞÂÊäÈë£º\n");
+				printf("è¾“å…¥æ•°æ®è¿‡å¤šï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 				flag = 1;
 			}
 		}
 
 	} while (flag);
-	printf("ÊäÈë³É¹¦£¡\n");
-}                                           //ÓÃÓÚ»ñÈ¡×Ô¶¨ÒåµÄ¶şÎ¬Êı×é£¬µ«Ö»Ö§³ÖÒ»ĞĞÊäÈë
+	printf("è¾“å…¥æˆåŠŸï¼\n");
+}                                           //ç”¨äºè·å–è‡ªå®šä¹‰çš„äºŒç»´æ•°ç»„ï¼Œä½†åªæ”¯æŒä¸€è¡Œè¾“å…¥
 
 void print_matrix(int (*mat)[MAX_M], int row, int col)
 {
@@ -157,27 +157,27 @@ void print_matrix(int (*mat)[MAX_M], int row, int col)
 			printf("\n");
 		}
 	}
-}                                        //ÓÃÓÚ´òÓ¡¶şÎ¬Êı×é
+}                                        //ç”¨äºæ‰“å°äºŒç»´æ•°ç»„
 
 void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
 {
-	printf("ÇëÊäÈë¶şÎ¬Êı×éÓĞ¼¸ĞĞ£º\n");
+	printf("è¯·è¾“å…¥äºŒç»´æ•°ç»„æœ‰å‡ è¡Œï¼š\n");
 	get_int(row);
 	while (*row > MAX_M || *row <= 0)
 	{
-		printf("ÊäÈëµÄĞĞÊıÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£º\n");
+		printf("è¾“å…¥çš„è¡Œæ•°æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 		get_int(row);
 	}
 
-	printf("ÇëÊäÈë¶şÎ¬Êı×éÓĞ¼¸ÁĞ£º\n");
+	printf("è¯·è¾“å…¥äºŒç»´æ•°ç»„æœ‰å‡ åˆ—ï¼š\n");
 	get_int(col);
 	while (*col > MAX_M || *col <= 0)
 	{
-		printf("ÊäÈëµÄÁĞÊıÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£¨0£¬50]£º\n");
+		printf("è¾“å…¥çš„åˆ—æ•°æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼ˆ0ï¼Œ50]ï¼š\n");
 		get_int(col);
 	}
 
-	printf("ÇëÊäÈë%d¸öÕûÊı£¨ÒÔ¾ØÕóµÄ¸ñÊ½ÊäÈë£©£º\n", (*col) * (*row));
+	printf("è¯·è¾“å…¥%dä¸ªæ•´æ•°ï¼ˆä»¥çŸ©é˜µçš„æ ¼å¼è¾“å…¥ï¼‰ï¼š\n", (*col) * (*row));
 
 	char buf[200];
 	char* p;
@@ -187,14 +187,14 @@ void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
 	{
 		if (fgets(buf, sizeof(buf), stdin) == NULL)
 		{
-			printf("Î´¼ì²âµ½ÊäÈë£¬ÇëÖØĞÂÊäÈëµÚ%dĞĞ\n", x + 1);
+			printf("æœªæ£€æµ‹åˆ°è¾“å…¥ï¼Œè¯·é‡æ–°è¾“å…¥ç¬¬%dè¡Œ\n", x + 1);
 			continue;
 		}
 		p = buf;
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
-			printf("Ã»ÓĞÊäÈëÓĞĞ§Êı¾İ£¬ÇëÖØĞÂÊäÈëµÚ%dĞĞ£º\n", x + 1);
+			printf("æ²¡æœ‰è¾“å…¥æœ‰æ•ˆæ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ç¬¬%dè¡Œï¼š\n", x + 1);
 			continue;
 		}
 		for (count = 0; count < *col; count++)
@@ -204,12 +204,12 @@ void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
 				p = skip_allspaces(p);
 				if (*p == '\0')
 				{
-					printf("ÊäÈëµÄÓĞĞ§Êı¾İ²»¹»£¬ÇëÖØĞÂÊäÈëµÚ%dĞĞ£º\n", x + 1);
+					printf("è¾“å…¥çš„æœ‰æ•ˆæ•°æ®ä¸å¤Ÿï¼Œè¯·é‡æ–°è¾“å…¥ç¬¬%dè¡Œï¼š\n", x + 1);
 					break;
 				}
 				else
 				{
-					printf("ÊäÈëÖĞÓĞÎ¥¹æÊı¾İ£¬ÇëÖØĞÂÊäÈëµÚ%dĞĞ£º\n", x + 1);
+					printf("è¾“å…¥ä¸­æœ‰è¿è§„æ•°æ®ï¼Œè¯·é‡æ–°è¾“å…¥ç¬¬%dè¡Œï¼š\n", x + 1);
 					break;
 				}
 			}
@@ -225,19 +225,19 @@ void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
 		p = skip_allspaces(p);
 		if (*p != '\0')
 		{
-			printf("ÊäÈëµÄÊı¾İ¹ı¶à£¬ÇëÖØĞÂÊäÈëµÚ%dĞĞ£º\n", x + 1);
+			printf("è¾“å…¥çš„æ•°æ®è¿‡å¤šï¼Œè¯·é‡æ–°è¾“å…¥ç¬¬%dè¡Œï¼š\n", x + 1);
 			continue;
 		}
 		x++;
 	}
-	printf("ÊäÈë³É¹¦£¡\n");
-}                                       //ÓÃÓÚ»ñÈ¡×Ô¶¨ÒåµÄ¶şÎ¬Êı×é£¬Ö§³Ö¶àĞĞÊäÈë
+	printf("è¾“å…¥æˆåŠŸï¼\n");
+}                                       //ç”¨äºè·å–è‡ªå®šä¹‰çš„äºŒç»´æ•°ç»„ï¼Œæ”¯æŒå¤šè¡Œè¾“å…¥
 
 void get_matrix(int (*mat)[MAX_M], int* row, int* col)
 {
 	char choice;
 
-	printf("ÇëÊäÈëÄãÏëÒªµÄÊäÈë·½Ê½\nA/a£ºÒ»ĞĞÊäÈë\nB/b£º¶àĞĞÊäÈë\n");
+	printf("è¯·è¾“å…¥ä½ æƒ³è¦çš„è¾“å…¥æ–¹å¼\nA/aï¼šä¸€è¡Œè¾“å…¥\nB/bï¼šå¤šè¡Œè¾“å…¥\n");
 	get_twochoice(&choice);
 
 	if (choice == 'A' || choice == 'a')
@@ -248,7 +248,7 @@ void get_matrix(int (*mat)[MAX_M], int* row, int* col)
 	{
 		get_B_matrix(mat, row, col);
 	}
-}                                       //ÓÃÓÚ×ÔÖ÷Ñ¡Ôñ¶şÎ¬Êı×éµÄÊäÈë·½Ê½
+}                                       //ç”¨äºè‡ªä¸»é€‰æ‹©äºŒç»´æ•°ç»„çš„è¾“å…¥æ–¹å¼
 
 void matrix_flat(int (*mat)[MAX_M], int row, int col, int* flat)
 {
@@ -260,26 +260,26 @@ void matrix_flat(int (*mat)[MAX_M], int row, int col, int* flat)
 			flat[x++] = mat[a][b];
 		}
 	}
-}                                       //ÓÃÀ´½«¶şÎ¬Êı×éÒ»Î¬»¯
+}                                       //ç”¨æ¥å°†äºŒç»´æ•°ç»„ä¸€ç»´åŒ–
 
 void matrix_unflat(int (*mat)[MAX_M], int* flat, int len, int* row, int* col)
 {
 	int flag;
 
-	printf("ÇëÊäÈëÒª×ª»¯µÄ¶şÎ¬Êı×éµÄÁĞÊı£º\n");
+	printf("è¯·è¾“å…¥è¦è½¬åŒ–çš„äºŒç»´æ•°ç»„çš„åˆ—æ•°ï¼š\n");
 	do
 	{
 		flag = 0;
 		get_int(col);
 		if (*col <= 0 || *col > MAX_M || (len / *col) > MAX_M)
 		{
-			printf("ÊäÈëµÄÁĞÊı·¶Î§ÓĞÎÊÌâ£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("è¾“å…¥çš„åˆ—æ•°èŒƒå›´æœ‰é—®é¢˜ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			flag = 1;
 			continue;
 		}
 		if (len % *col != 0)
 		{
-			printf("¸ÃÒ»Î¬Êı×éÃ»·¨×ª»»³É¸ÃÁĞÊıµÄ¶şÎ¬Êı×é£¬ÇëÖØĞÂÊäÈë£º\n");
+			printf("è¯¥ä¸€ç»´æ•°ç»„æ²¡æ³•è½¬æ¢æˆè¯¥åˆ—æ•°çš„äºŒç»´æ•°ç»„ï¼Œè¯·é‡æ–°è¾“å…¥ï¼š\n");
 			flag = 1;
 			continue;
 		}
@@ -291,7 +291,7 @@ void matrix_unflat(int (*mat)[MAX_M], int* flat, int len, int* row, int* col)
 	{
 		mat[a / *col][a % *col] = flat[a];
 	}
-}                                       //ÓÃÀ´½«Ò»Î¬Êı×é¶şÎ¬»¯
+}                                       //ç”¨æ¥å°†ä¸€ç»´æ•°ç»„äºŒç»´åŒ–
 
 
 void select_Asort(int* arr, int len)
@@ -313,7 +313,7 @@ void select_Asort(int* arr, int len)
 			arr[min] = temp;
 		}
 	}
-}                                   //Ñ¡ÔñÅÅĞò£¬ÉıĞò
+}                                   //é€‰æ‹©æ’åºï¼Œå‡åº
 
 void select_Bsort(int* arr, int len)
 {
@@ -334,12 +334,12 @@ void select_Bsort(int* arr, int len)
 			arr[max] = temp;
 		}
 	}
-}                                   //Ñ¡ÔñÅÅĞò£¬½µĞò
+}                                   //é€‰æ‹©æ’åºï¼Œé™åº
 
 void select_sort(int* arr, int len)
 {
 	char choice;
-	printf("ÇëÊäÈëÄãÏëÒªµÄÅÅĞò·½Ê½\nA/a£ºÉıĞòÅÅĞò\nB/b£º½µĞòÅÅĞò\n");
+	printf("è¯·è¾“å…¥ä½ æƒ³è¦çš„æ’åºæ–¹å¼\nA/aï¼šå‡åºæ’åº\nB/bï¼šé™åºæ’åº\n");
 	get_twochoice(&choice);
 
 	if (choice == 'A' || choice == 'a')
@@ -350,24 +350,24 @@ void select_sort(int* arr, int len)
 	{
 		select_Bsort(arr, len);
 	}
-}                                          //ÓÃÀ´Ñ¡ÔñÑ¡ÔñÅÅĞòÊÇÉıĞò»¹ÊÇ½µĞò
+}                                          //ç”¨æ¥é€‰æ‹©é€‰æ‹©æ’åºæ˜¯å‡åºè¿˜æ˜¯é™åº
 
 void array_linear_search(int* arr, int len)
 {
 	int values;
-	printf("ÇëÊäÈëÒ»¸öÒª²éÕÒµÄÔªËØ£¨ÕûÊı£©£º\n");
+	printf("è¯·è¾“å…¥ä¸€ä¸ªè¦æŸ¥æ‰¾çš„å…ƒç´ ï¼ˆæ•´æ•°ï¼‰ï¼š\n");
 	get_int(&values);
 
 	for (int a = 0; a < len; a++)
 	{
 		if (arr[a] == values)
 		{
-			printf("ÕÒµ½ÁË£¬ËûÊÇÕâ¸öÊı×éµÄµÚ%d¸öÔªËØ\n", a + 1);
+			printf("æ‰¾åˆ°äº†ï¼Œä»–æ˜¯è¿™ä¸ªæ•°ç»„çš„ç¬¬%dä¸ªå…ƒç´ \n", a + 1);
 			return;
 		}
 	}
-	printf("Î´ÔÚÊı×éÖĞÕÒµ½¸ÃÔªËØ\n");
-}                                        //²éÕÒ×Ô¼ºÑ¡¶¨µÄÔªËØ
+	printf("æœªåœ¨æ•°ç»„ä¸­æ‰¾åˆ°è¯¥å…ƒç´ \n");
+}                                        //æŸ¥æ‰¾è‡ªå·±é€‰å®šçš„å…ƒç´ 
 
 void array_search_ui(int* arr, int len)
 {
@@ -376,7 +376,7 @@ void array_search_ui(int* arr, int len)
 	while (1)
 	{
 		char choice;
-		printf("ÊÇ·ñÖØĞÂ²éÕÒ£º\nA/a£ºÊÇ\nB/b£º·ñ");
+		printf("æ˜¯å¦é‡æ–°æŸ¥æ‰¾ï¼š\nA/aï¼šæ˜¯\nB/bï¼šå¦");
 		get_twochoice(&choice);
 
 		if (choice == 'A' || choice == 'a')
@@ -388,7 +388,7 @@ void array_search_ui(int* arr, int len)
 			return;
 		}
 	}
-}                                     //·â×°ÁËarray_linear_search()º¯Êı£¬Ê¹Æä¸ü¾ßÓĞ½»»¥ĞÔ
+}                                     //å°è£…äº†array_linear_search()å‡½æ•°ï¼Œä½¿å…¶æ›´å…·æœ‰äº¤äº’æ€§
 
 void matrix_search(int (*mat)[MAX_M], int row, int col)
 {
@@ -396,20 +396,20 @@ void matrix_search(int (*mat)[MAX_M], int row, int col)
 	matrix_flat(mat, row, col, flat);
 
 	int values;
-	printf("ÇëÊäÈëÒ»¸öÒª²éÕÒµÄÔªËØ£¨ÕûÊı£©£º\n");
+	printf("è¯·è¾“å…¥ä¸€ä¸ªè¦æŸ¥æ‰¾çš„å…ƒç´ ï¼ˆæ•´æ•°ï¼‰ï¼š\n");
 	get_int(&values);
 
 	for (int a = 0; a < row * col; a++)
 	{
 		if (flat[a] == values)
 		{
-			printf("ÕÒµ½ÁË£¬ËûÔÚÕâ¸ö¶şÎ¬Êı×éµÄµÚ%dĞĞ£¬µÚ%dÁĞ\n", (a / col) + 1, (a % col) + 1);
+			printf("æ‰¾åˆ°äº†ï¼Œä»–åœ¨è¿™ä¸ªäºŒç»´æ•°ç»„çš„ç¬¬%dè¡Œï¼Œç¬¬%dåˆ—\n", (a / col) + 1, (a % col) + 1);
 			return;
 		}
 	}
-	printf("Î´ÔÚ¸ÃÊı×éÖĞÕÒµ½¸ÃÔªËØ\n");
+	printf("æœªåœ¨è¯¥æ•°ç»„ä¸­æ‰¾åˆ°è¯¥å…ƒç´ \n");
 
-}                                     //ÓÃÀ´²éÕÒ¶şÎ¬Êı×éÖĞµÄÔªËØ
+}                                     //ç”¨æ¥æŸ¥æ‰¾äºŒç»´æ•°ç»„ä¸­çš„å…ƒç´ 
 
 void transpose_matrix(int (*mat)[MAX_M], int* row, int* col)
 {
@@ -435,4 +435,4 @@ void transpose_matrix(int (*mat)[MAX_M], int* row, int* col)
 	temp = *row;
 	*row = *col;
 	*col = temp;
-}                                     //ÓÃÀ´×ªÖÃ¾ØÕó
+}                                     //ç”¨æ¥è½¬ç½®çŸ©é˜µ
