@@ -8,7 +8,7 @@ void print_array(int* arr, int a)
 		printf("%d\t", arr[x]);
 	}
 }                                 //打印一维数组
-  
+
 void reverse_array(int* arr, int len)
 {
 	for (int x = 0; x < len / 2; x++)

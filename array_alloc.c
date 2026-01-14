@@ -19,7 +19,7 @@ int* get_array(int* len)
 		fprintf(stderr, "内存分配失败\n");
 		return NULL;
 	} 
-
+	
 	// 预留足够的字符：每个int最多约11字符(含符号) + 空格；再加换行和\0
 	size_t cap = (size_t)(*len) * 12 + 2;
 
