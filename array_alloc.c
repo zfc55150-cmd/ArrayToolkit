@@ -86,3 +86,4 @@ int* get_array(int* len)
 
 	return arr;
 }                                 //获取一个自定义长度的一维数组
+一个编码问题搞半天，我也是无语了
