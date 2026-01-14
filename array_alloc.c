@@ -15,7 +15,7 @@ int* get_array(int* len)
 
 	int* arr = (int*)malloc((size_t)(*len) * sizeof(int));
 	if (arr == NULL)
-	{
+	{ 
 		fprintf(stderr, "内存分配失败\n");
 		return NULL;
 	} 
