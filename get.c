@@ -8,7 +8,7 @@ char* skip_midspaces(char* x)
 	}
 	return x;
 }                       //跳过空格和Tab键
-
+    
 char* skip_allspaces(char* x)
 {
 	while (*x == ' ' || *x == '\t' || *x == '\n')

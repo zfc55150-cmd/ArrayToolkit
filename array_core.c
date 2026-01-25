@@ -19,7 +19,7 @@ void reverse_array(int* arr, int len)
 		arr[len - 1 - x] = temp;
 	}
 }                                //逆序一维数组
-
+     
 void bubble_sort(int* arr, int len)
 {
 	char choice;
