@@ -1,5 +1,5 @@
 #include "get.h"
-
+ 
 char* skip_midspaces(char* x)
 {
 	while (*x == ' ' || *x == '\t')

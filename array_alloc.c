@@ -10,7 +10,7 @@ int* get_array(int* len)
 		printf("长度必须大于0，请重新输入：\n");
 		get_int(len);
 	}
-
+     
 	printf("请输入%d个整数：\n", *len);
 
 	int* arr = (int*)malloc((size_t)(*len) * sizeof(int));

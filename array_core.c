@@ -1,6 +1,5 @@
 #include "array_core.h"
 
-
 void print_array(int* arr, int a)
 {
 	for (int x = 0; x < a; x++)
