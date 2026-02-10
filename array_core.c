@@ -1,3 +1,5 @@
+#include<stdio.h>
+#include<stdlib.h>
 #include "array_core.h"
 
 void print_array(int* arr, int a)
@@ -63,27 +65,34 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 {
 	printf("请输入二维数组有几行：\n");
 	get_int(row);
-	while (*row > MAX_M || *row <= 0)
+	while (*row <= 0)
 	{
-		printf("输入的行数有问题，请重新输入：\n");
+		printf("行数必须大于零，请重新输入：\n");
 		get_int(row);
 	}
 
 	printf("请输入二维数组有几列：\n");
 	get_int(col);
-	while (*col > MAX_M || *col <= 0)
+	while (*col <= 0)
 	{
-		printf("输入的列数有问题，请重新输入（0，50]：\n");
+		printf("列数必须大于零，请重新输入：\n");
 		get_int(col);
+	}
+
+	int* mat = (int*)malloc((size_t)(*row * *col) * sizeof(int));
+	if (mat == NULL) {
+		fprintf(stderr,"内存分配失败\n");
+		return NULL;
 	}
 
 	printf("请输入%d个整数：\n", (*col) * (*row));
 	int flag, total;
 	total = *col * *row;
+	size_t cap=
 
 	do
 	{
-		char buf[200];
+		char* buf=malloc()
 		char* p = buf;
 		int used;
 

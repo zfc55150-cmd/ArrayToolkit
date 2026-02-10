@@ -1,13 +1,13 @@
 #ifndef array_core_h
 #define array_core_h
 
-#include<stdio.h>
-#include"get.h"
-#include"array_alloc.h"	
-
 #define MAX_N 500
 #define MAX_M 50
 
+void get_char(char* x);
+void get_int(int* x);
+void get_twochoice(char* x);
+char* skip_allspaces(char* x);
 void transpose_matrix(int (*mat)[MAX_M], int* row, int* col);
 void array_linear_search(int* arr, int len);
 void array_search_ui(int* arr, int len);

@@ -1,3 +1,4 @@
+#include<stdio.h>
 #include "get.h"
  
 char* skip_midspaces(char* x)

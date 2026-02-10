@@ -1,3 +1,5 @@
+#include<stdio.h>
+#include<stdlib.h>
 #include "array_alloc.h"
 
 int* get_array(int* len)
@@ -19,7 +21,7 @@ int* get_array(int* len)
 		fprintf(stderr, "内存分配失败\n");
 		return NULL;
 	} 
-	   
+	                                                      
 	// 预留足够的字符：每个int最多约11字符(含符号) + 空格；再加换行和\0
 	size_t cap = (size_t)(*len) * 12 + 2;
 
@@ -86,4 +88,3 @@ int* get_array(int* len)
 
 	return arr;
 }                                 //获取一个自定义长度的一维数组
-一个编码问题搞半天，我也是无语了

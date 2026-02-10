@@ -1,10 +1,8 @@
 #ifndef array_alloc_h
 #define array_alloc_h
 
-#include<stdio.h>
-#include<stdlib.h>
-#include"get.h"
-
+void get_int(int *x);
+char* skip_allspaces(char* x);
 int* get_array(int* len);
 
 #endif
