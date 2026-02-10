@@ -37,6 +37,6 @@ int main(void)
 		}
 
 
-		free(arr1);
+		free(arr);
 	}
 }
