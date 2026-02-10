@@ -6,7 +6,7 @@
 
 int mat[MAX_M][MAX_M];
 int flat[MAX_M * MAX_M];
-
+ 
 int main(void)
 {
 	SetConsoleOutputCP(65001);
@@ -37,6 +37,6 @@ int main(void)
 		}
 
 
-		free(arr);
+		free(arr1);
 	}
 }
