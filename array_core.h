@@ -18,7 +18,7 @@ void bubble_sort(int* arr, int len);
 void select_Asort(int* arr, int len);
 void select_Bsort(int* arr, int len);
 void select_sort(int* arr, int len);
-void get_A_matrix(int (*arr)[MAX_M], int* row, int* col);
+int** get_A_matrix(int* row, int* col);
 void print_matrix(int (*arr)[MAX_M], int row, int col);
 void get_B_matrix(int (*mat)[MAX_M], int* row, int* col);
 void get_matrix(int (*mat)[MAX_M], int* row, int* col);

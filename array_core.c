@@ -2,14 +2,16 @@
 #include<stdlib.h>
 #include "array_core.h"
 
+//打印一维数组
 void print_array(int* arr, int a)
 {
 	for (int x = 0; x < a; x++)
 	{
 		printf("%d\t", arr[x]);
 	}
-}                                 //打印一维数组
+}                                 
 
+//逆序一维数组
 void reverse_array(int* arr, int len)
 {
 	for (int x = 0; x < len / 2; x++)
@@ -19,8 +21,9 @@ void reverse_array(int* arr, int len)
 		arr[x] = arr[len - 1 - x];
 		arr[len - 1 - x] = temp;
 	}
-}                                //逆序一维数组
-     
+}                                
+
+//两种冒泡排序，升序和降序
 void bubble_sort(int* arr, int len)
 {
 	char choice;
@@ -59,9 +62,9 @@ void bubble_sort(int* arr, int len)
 			}
 		}
 	}
-}                                          //两种冒泡排序，升序和降序
+}                                          
 
-void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
+int** get_A_matrix(int* row, int* col)
 {
 	printf("请输入二维数组有几行：\n");
 	get_int(row);
@@ -79,20 +82,41 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 		get_int(col);
 	}
 
-	int* mat = (int*)malloc((size_t)(*row * *col) * sizeof(int));
+	//生成二维数组的行指针
+	int** mat = (int**)malloc((size_t)(*row * sizeof(int*)));
 	if (mat == NULL) {
 		fprintf(stderr,"内存分配失败\n");
 		return NULL;
+	}                                     
+
+	//生成二维数组的总内存
+	mat[0] = (int*)malloc((size_t)(*row * *col * sizeof(int)));
+	if (mat[0] == NULL) {
+		fprintf(stderr, "内存分配失败\n");
+		free(mat);
+		return NULL;
 	}
 
-	printf("请输入%d个整数：\n", (*col) * (*row));
+	//将申请的连续内存按列数切分，计算并设置第一行到最后一行的起始地址
+	for (int a = 1; a < *row; a++) {
+		mat[a] = mat[0] + a * *col;
+	}
+
+	//计算并生成缓存区可能的最大内存
 	int flag, total;
 	total = *col * *row;
-	size_t cap=
+	size_t cap = sizeof(int) * *row * *col * 12 + 10;      
+	char* buf = (char*)malloc(cap);
+	if (buf == NULL) {
+		fprintf(stderr, "缓存区内存分配失败\n");
+		free(mat[0]);
+		free(mat);
+		return NULL;
+	}
 
+	printf("请输入%d个整数：\n", total);
 	do
 	{
-		char* buf=malloc()
 		char* p = buf;
 		int used;
 
@@ -100,10 +124,25 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 
 		if (fgets(buf, sizeof(buf), stdin) == NULL)
 		{
-			printf("未检测到输入，请重新输入\n");
+			printf("未检测到输入，出问题了：\n");
+			free(mat[0]);
+			free(mat);
+			free(buf);
+			return NULL;
+		}
+
+		//是否因输入输入过长被截断检测
+		size_t len_buf = strlen(buf);
+		if (len_buf > 0 && buf[len_buf - 1] != '\n') {
+			int c;
+			while ((c = getchar()) != '\n' && c != EOF)
+				;
+			printf("输入长度过长，请重新输入：");
 			flag = 1;
 			continue;
 		}
+
+		//输入空检测
 		p = skip_allspaces(p);
 		if (*p == '\0')
 		{
@@ -112,6 +151,7 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 			continue;
 		}
 
+		//将输入映射到二维数组上
 		for (int count = 0; count < total; count++)
 		{
 			if (sscanf(p, "%d%n", &mat[count / (*col)][count % (*col)], &used) != 1)
@@ -139,6 +179,8 @@ void get_A_matrix(int (*mat)[MAX_M], int* row, int* col)
 		{
 			continue;
 		}
+
+		//判断输入数据是否过多
 		else
 		{
 			p = skip_allspaces(p);
@@ -167,7 +209,7 @@ void print_matrix(int (*mat)[MAX_M], int row, int col)
 	}
 }                                        //用于打印二维数组
 
-void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
+int** get_B_matrix(int* row, int* col)
 {
 	printf("请输入二维数组有几行：\n");
 	get_int(row);
@@ -185,11 +227,30 @@ void get_B_matrix(int (*mat)[MAX_M], int* row, int* col)
 		get_int(col);
 	}
 
-	printf("请输入%d个整数（以矩阵的格式输入）：\n", (*col) * (*row));
+	//生成二维数组的行指针
+	int** mat = (int**)malloc(sizeof(int**) * *row);
+	if (mat == NULL) {
+		fprintf(stderr, "内存分配失败\n");
+		return NULL;
+	}
 
-	char buf[200];
+	//生成二维数组的总内存
+	mat[0] = (int*)malloc(sizeof(int*) * *row * *col);
+	if (mat[0] == NULL) {
+		fprintf(stderr,"内存分配失败\n");
+		free(mat);
+		return NULL;
+	}
+
+	//将申请到的连续内存按列数切分，计算并设置第一行到最后一行的起始地址
+	for (int a = 1; a <= *row; a++) {
+		mat[a] = mat[0] + a * *col;
+	}
+
+	char buf = malloc();
 	char* p;
 	int count, used, x = 0;
+	printf("请输入%d个整数（以矩阵的格式输入）：\n", (*col) * (*row));
 
 	while (x < *row)
 	{

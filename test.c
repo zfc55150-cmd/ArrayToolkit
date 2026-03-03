@@ -28,15 +28,18 @@ int main(void)
 				printf("生成失败，请重试\n");
 				continue;
 			}
+			x++;
 			break;
 		}
 		case 'b':
 		case 'B': {
 
 		}
+		default:
+			free(arr);
 		}
 
 
-		free(arr);
+		
 	}
 }
