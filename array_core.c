@@ -67,8 +67,7 @@ void bubble_sort(int* arr, int len)
 
 int** get_A_matrix(int* row, int* col)
 {
-	int total;
-	size_t cap;
+	size_t cap, total;
 	do
 	{
 		printf("请输入二维数组有几行：\n");
@@ -93,7 +92,7 @@ int** get_A_matrix(int* row, int* col)
 		}
 
 		total = *col * *row;
-		cap = sizeof(int) * total * 12 + 10;
+		cap = total * 12 + 10;
 		if (cap > (size_t)INT_MAX) {
 			printf("请求的矩阵过大，系统分配失败，请重新规划行列数\n");
 			continue;
@@ -132,7 +131,7 @@ int** get_A_matrix(int* row, int* col)
 		return NULL;
 	}
 
-	printf("请输入%d个整数：\n", total);
+	printf("请输入%zu个整数：\n", total);
 	do
 	{
 		char* p = buf;
@@ -155,7 +154,7 @@ int** get_A_matrix(int* row, int* col)
 			int c;
 			while ((c = getchar()) != '\n' && c != EOF)
 				;
-			printf("输入长度过长，请重新输入：");
+			printf("输入长度过长，请重新输入：\n");
 			flag = 1;
 			continue;
 		}
@@ -170,9 +169,9 @@ int** get_A_matrix(int* row, int* col)
 		}
 
 		//将输入映射到二维数组上
-		for (int count = 0; count < total; count++)
+		for (size_t count = 0; count < total; count++)
 		{
-			if (sscanf(p, "%d%n", &mat[count / (*col)][count % (*col)], &used) != 1)
+			if (sscanf(p, "%d%n", &mat[count / (size_t)(*col)][count % (size_t)(*col)], &used) != 1)
 			{
 				flag = 1;
 				p = skip_allspaces(p);
@@ -232,21 +231,28 @@ void print_matrix(int (*mat)[MAX_M], int row, int col)
 
 int** get_B_matrix(int* row, int* col)
 {
-	printf("请输入二维数组有几行：\n");
-	get_int(row);
-	while (*row > MAX_M || *row <= 0)
+	size_t cap, total;
+	do
 	{
-		printf("输入的行数有问题，请重新输入：\n");
+		printf("请输入二维数组有几行：\n");
 		get_int(row);
-	}
+		while (*row <= 0)
+		{
+			printf("输入的行数有问题，请重新输入：\n");
+			get_int(row);
+		}
 
-	printf("请输入二维数组有几列：\n");
-	get_int(col);
-	while (*col > MAX_M || *col <= 0)
-	{
-		printf("输入的列数有问题，请重新输入（0，50]：\n");
+		printf("请输入二维数组有几列：\n");
 		get_int(col);
-	}
+		while (*col <= 0)
+		{
+			printf("输入的列数有问题，请重新输入：\n");
+			get_int(col);
+		}
+
+		total = *row * *col;
+		break;
+	} while (1);
 
 	//生成二维数组的行指针
 	int** mat = (int**)malloc(sizeof(int**) * *row);
@@ -268,8 +274,6 @@ int** get_B_matrix(int* row, int* col)
 		mat[a] = mat[0] + a * *col;
 	}
 
-	int total = *col * *row;
-	size_t cap = sizeof(int) * total * 12 + 10;
 	char* buf = (char*)malloc(cap);
 	char* p;
 	int count, used, x = 0;
