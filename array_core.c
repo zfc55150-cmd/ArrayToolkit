@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<limits.h>
 #include "array_core.h"
 
 //打印一维数组
@@ -9,7 +10,7 @@ void print_array(int* arr, int a)
 	{
 		printf("%d\t", arr[x]);
 	}
-}                                 
+}
 
 //逆序一维数组
 void reverse_array(int* arr, int len)
@@ -21,7 +22,7 @@ void reverse_array(int* arr, int len)
 		arr[x] = arr[len - 1 - x];
 		arr[len - 1 - x] = temp;
 	}
-}                                
+}
 
 //两种冒泡排序，升序和降序
 void bubble_sort(int* arr, int len)
@@ -62,35 +63,54 @@ void bubble_sort(int* arr, int len)
 			}
 		}
 	}
-}                                          
+}
 
 int** get_A_matrix(int* row, int* col)
 {
-	printf("请输入二维数组有几行：\n");
-	get_int(row);
-	while (*row <= 0)
+	int total;
+	size_t cap;
+	do
 	{
-		printf("行数必须大于零，请重新输入：\n");
+		printf("请输入二维数组有几行：\n");
 		get_int(row);
-	}
+		while (*row <= 0)
+		{
+			printf("行数必须大于零，请重新输入：\n");
+			get_int(row);
+		}
 
-	printf("请输入二维数组有几列：\n");
-	get_int(col);
-	while (*col <= 0)
-	{
-		printf("列数必须大于零，请重新输入：\n");
+		printf("请输入二维数组有几列：\n");
 		get_int(col);
-	}
+		while (*col <= 0)
+		{
+			printf("列数必须大于零，请重新输入：\n");
+			get_int(col);
+		}
+
+		if (*col > INT_MAX/ *row) {
+			printf("请求的矩阵过大，系统分配失败，请重新规划行列数\n");
+			continue;
+		}
+
+		total = *col * *row;
+		cap = sizeof(int) * total * 12 + 10;
+		if (cap > (size_t)INT_MAX) {
+			printf("请求的矩阵过大，系统分配失败，请重新规划行列数\n");
+			continue;
+		}
+
+		break;
+	} while (1);
 
 	//生成二维数组的行指针
 	int** mat = (int**)malloc((size_t)(*row * sizeof(int*)));
 	if (mat == NULL) {
-		fprintf(stderr,"内存分配失败\n");
+		fprintf(stderr, "内存分配失败\n");
 		return NULL;
-	}                                     
+	}
 
 	//生成二维数组的总内存
-	mat[0] = (int*)malloc((size_t)(*row * *col * sizeof(int)));
+	mat[0] = (int*)malloc((size_t)(total * sizeof(int)));
 	if (mat[0] == NULL) {
 		fprintf(stderr, "内存分配失败\n");
 		free(mat);
@@ -103,9 +123,7 @@ int** get_A_matrix(int* row, int* col)
 	}
 
 	//计算并生成缓存区可能的最大内存
-	int flag, total;
-	total = *col * *row;
-	size_t cap = sizeof(int) * *row * *col * 12 + 10;      
+	int flag;
 	char* buf = (char*)malloc(cap);
 	if (buf == NULL) {
 		fprintf(stderr, "缓存区内存分配失败\n");
@@ -122,7 +140,7 @@ int** get_A_matrix(int* row, int* col)
 
 		flag = 0;
 
-		if (fgets(buf, sizeof(buf), stdin) == NULL)
+		if (fgets(buf, (int)cap, stdin) == NULL)
 		{
 			printf("未检测到输入，出问题了：\n");
 			free(mat[0]);
@@ -131,7 +149,7 @@ int** get_A_matrix(int* row, int* col)
 			return NULL;
 		}
 
-		//是否因输入输入过长被截断检测
+		//是否因输入长度过长被截断检测
 		size_t len_buf = strlen(buf);
 		if (len_buf > 0 && buf[len_buf - 1] != '\n') {
 			int c;
@@ -180,7 +198,7 @@ int** get_A_matrix(int* row, int* col)
 			continue;
 		}
 
-		//判断输入数据是否过多
+		//判断输入数据是多于所需要的
 		else
 		{
 			p = skip_allspaces(p);
@@ -192,7 +210,10 @@ int** get_A_matrix(int* row, int* col)
 		}
 
 	} while (flag);
+
 	printf("输入成功！\n");
+	free(buf);
+	return mat;
 }                                           //用于获取自定义的二维数组，但只支持一行输入
 
 void print_matrix(int (*mat)[MAX_M], int row, int col)
@@ -237,7 +258,7 @@ int** get_B_matrix(int* row, int* col)
 	//生成二维数组的总内存
 	mat[0] = (int*)malloc(sizeof(int*) * *row * *col);
 	if (mat[0] == NULL) {
-		fprintf(stderr,"内存分配失败\n");
+		fprintf(stderr, "内存分配失败\n");
 		free(mat);
 		return NULL;
 	}
@@ -247,18 +268,36 @@ int** get_B_matrix(int* row, int* col)
 		mat[a] = mat[0] + a * *col;
 	}
 
-	char buf = malloc();
+	int total = *col * *row;
+	size_t cap = sizeof(int) * total * 12 + 10;
+	char* buf = (char*)malloc(cap);
 	char* p;
 	int count, used, x = 0;
-	printf("请输入%d个整数（以矩阵的格式输入）：\n", (*col) * (*row));
+	printf("请输入%d个整数（以矩阵的格式输入）：\n", total);
 
+	//将输入一行行录入
 	while (x < *row)
 	{
-		if (fgets(buf, sizeof(buf), stdin) == NULL)
+		if (fgets(buf, (int)cap, stdin) == NULL)
 		{
-			printf("未检测到输入，请重新输入第%d行\n", x + 1);
+			printf("未检测到输入，出问题了\n");
+			free(buf);
+			free(mat[0]);
+			free(mat);
+			return NULL;
+		}
+
+		//是否因输入过长被截断检测
+		size_t len_buf = strlen(buf);
+		if (len_buf > 0 && buf[len_buf - 1] != '\n') {
+			int c;
+			while ((c = getchar()) != '\n' && c != EOF)
+				;
+			printf("输入长度过长，请重新输入：\n");
 			continue;
 		}
+
+		//输入是否为空检测
 		p = buf;
 		p = skip_allspaces(p);
 		if (*p == '\0')
@@ -266,6 +305,7 @@ int** get_B_matrix(int* row, int* col)
 			printf("没有输入有效数据，请重新输入第%d行：\n", x + 1);
 			continue;
 		}
+
 		for (count = 0; count < *col; count++)
 		{
 			if (sscanf(p, "%d%n", &mat[x][count], &used) != 1)
