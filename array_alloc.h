@@ -4,5 +4,6 @@
 void get_int(int *x);
 char* skip_allspaces(char* x);
 int* get_array(int* len);
+int** get_A_matrix(int* row, int* col);
 
 #endif
