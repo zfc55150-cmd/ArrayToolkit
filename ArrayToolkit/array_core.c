@@ -12,8 +12,9 @@ void print_array(int* arr, int a)
 {
 	for (int x = 0; x < a; x++)
 	{
-		printf("%d\t", arr[x]);
+		printf("%d  ", arr[x]);
 	}
+	printf("\n");
 }
 
 //逆序一维数组
@@ -84,7 +85,7 @@ void print_matrix(int** mat,int row, int col)
 	}
 }
 
-//用来将二维数组一维化
+//用来将二维数组一维化 (  使用后记得要释放！ ）
 int* matrix_flat(int** mat, int row, int col)
 {
 	int* flat = (int*)malloc((size_t)row * col * sizeof(int));
@@ -103,7 +104,7 @@ int* matrix_flat(int** mat, int row, int col)
 	}
 
 	return flat;
-}                                       
+}                                                                          
 
 //用来将一维数组二维化
 int** matrix_unflat(int* flat, int len, int* row, int* col)
@@ -249,14 +250,11 @@ void array_search_ui(int* arr, int len)
 
 //用来查找二维数组中的元素
 void matrix_search(int** mat, int row, int col)
-{
-	int* flat = (int*)malloc((size_t)row * col * sizeof(int));
+{	
+	int* flat=matrix_flat(mat, row, col);
 	if (flat == NULL) {
-		printf("查找元素时将二维数组一维化失败,查找失败！\n");
 		return;
 	}
-
-	flat=matrix_flat(mat, row, col);
 
 	int values;
 	printf("请输入一个要查找的元素（整数）：\n");
@@ -267,11 +265,13 @@ void matrix_search(int** mat, int row, int col)
 		if (flat[a] == values)
 		{
 			printf("找到了，他在这个二维数组的第%d行，第%d列\n", (a / col) + 1, (a % col) + 1);
+			free(flat);
 			return;
 		}
 	}
 	printf("未在该数组中找到该元素\n");
 
+	free(flat);
 }                                     
 
 //用来转置矩阵
@@ -308,7 +308,7 @@ void transpose_matrix(int** mat, int* row, int* col)
 }
 
 //用来计算n阶行列式
-double caculateDeterminant(int** mat, int n)
+double calculateDeterminant(int** mat, int n)
 {
 	//复制一个相同的二维数组用于计算
 	double** mat2 = (double**)createContiguousMatrix(n, n, sizeof(double));

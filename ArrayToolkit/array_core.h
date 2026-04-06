@@ -23,6 +23,6 @@ void select_sort(int* arr, int len);
 void print_matrix(int** mat, int row, int col);
 int* matrix_flat(int** mat, int row, int col);
 int** matrix_unflat(int* flat, int len,int* row,int* col);
-double caculateDeterminant(int** mat, int n);
+double calculateDeterminant(int** mat, int n);
 
 #endif
