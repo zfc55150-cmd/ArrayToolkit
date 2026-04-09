@@ -1,7 +1,9 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<limits.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <string.h>
+
+#include "get.h"
 #include "array_alloc.h"
 
 //获取一个自定义长度的一维数组
@@ -223,7 +225,7 @@ int** get_B_matrix(int row, int col)
 {
 	size_t cap, total;
 	total = (size_t)row * col;
-	cap = total * 12 + 2;
+	cap = (size_t)col * 12 + 2;
 
 	//动态生成二维数组
 	int** mat = (int**)createContiguousMatrix(row, col,sizeof(int));

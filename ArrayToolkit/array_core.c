@@ -1,7 +1,11 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<limits.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <math.h>
+#include <assert.h>
+
+#include "get.h"
+#include "array_alloc.h"
 #include "array_core.h"
 
 #define FLT_EPSILON 1e-6
@@ -71,7 +75,7 @@ void bubble_sort(int* arr, int len)
 }
 
 //用于打印二维数组
-void print_matrix(int** mat,int row, int col)
+void print_matrix(int** mat, int row, int col)
 {
 	int total = row * col;
 
@@ -104,7 +108,7 @@ int* matrix_flat(int** mat, int row, int col)
 	}
 
 	return flat;
-}                                                                          
+}
 
 //用来将一维数组二维化
 int** matrix_unflat(int* flat, int len, int* row, int* col)
@@ -131,10 +135,10 @@ int** matrix_unflat(int* flat, int len, int* row, int* col)
 
 		break;
 	} while (1);
-	
+
 	*row = len / *col;
 
-	int** mat = (int**)createContiguousMatrix(*row, *col,sizeof(int));
+	int** mat = (int**)createContiguousMatrix(*row, *col, sizeof(int));
 	if (mat == NULL) {
 		printf("二维数组生成失败，一维数组二维化失败\n");
 		return NULL;
@@ -145,7 +149,7 @@ int** matrix_unflat(int* flat, int len, int* row, int* col)
 		mat[a / *col][a % *col] = flat[a];
 	}
 	return mat;
-}                                       
+}
 
 //选择排序，升序
 void select_Asort(int* arr, int len)
@@ -167,7 +171,7 @@ void select_Asort(int* arr, int len)
 			arr[min] = temp;
 		}
 	}
-}                                   
+}
 
 //选择排序，降序
 void select_Bsort(int* arr, int len)
@@ -189,7 +193,7 @@ void select_Bsort(int* arr, int len)
 			arr[max] = temp;
 		}
 	}
-}                                   
+}
 
 //用来选择选择排序是升序还是降序
 void select_sort(int* arr, int len)
@@ -206,7 +210,7 @@ void select_sort(int* arr, int len)
 	{
 		select_Bsort(arr, len);
 	}
-}                                          
+}
 
 //查找自己选定的元素
 void array_linear_search(int* arr, int len)
@@ -246,12 +250,12 @@ void array_search_ui(int* arr, int len)
 			return;
 		}
 	}
-}                                     
+}
 
 //用来查找二维数组中的元素
 void matrix_search(int** mat, int row, int col)
-{	
-	int* flat=matrix_flat(mat, row, col);
+{
+	int* flat = matrix_flat(mat, row, col);
 	if (flat == NULL) {
 		return;
 	}
@@ -272,52 +276,59 @@ void matrix_search(int** mat, int row, int col)
 	printf("未在该数组中找到该元素\n");
 
 	free(flat);
-}                                     
+}
 
 //用来转置矩阵
-void transpose_matrix(int** mat, int* row, int* col)
+int** transpose_matrix(int** mat, int* row, int* col)
 {
-	int** mat2 = (int**)createContiguousMatrix(*col, *row,sizeof(int));
-	if (mat2 == NULL) {
-		printf("转置辅助矩阵生成失败，转置失败\n");
-		return;
+	if (mat == NULL || row == NULL || col == NULL) {
+		return NULL;
 	}
 
-	for (int a = 0; a < *row; a++)
-	{
-		for (int b = 0; b < *col; b++)
-		{
+	int** mat2 = (int**)createContiguousMatrix(*col, *row, sizeof(int));
+	if (mat2 == NULL) {
+		printf("转置辅助矩阵生成失败，转置失败\n");
+		return NULL;
+	}
+
+	for (int a = 0; a < *row; a++) {
+		for (int b = 0; b < *col; b++) {
 			mat2[b][a] = mat[a][b];
 		}
 	}
 
-	for (int a = 0; a < *col; a++)
-	{
-		for (int b = 0; b < *row; b++)
-		{
-			mat[a][b] = mat2[a][b];
-		}
-	}
-
-	free(mat2[0]);
-	free(mat2);
 	int temp;
 	temp = *row;
 	*row = *col;
 	*col = temp;
+
+	return mat2;
 }
 
 //用来计算n阶行列式
-double calculateDeterminant(int** mat, int n)
-{
+int calculateDeterminant(int** mat, int n, double* result)
+{ 
+	//输入检测
+	assert(mat != NULL);
+	assert(n > 0);
+	assert(result == NULL);
+
+	if (mat == NULL || n <= 0 || result == NULL) {
+		return -1;
+	}
+
 	//复制一个相同的二维数组用于计算
 	double** mat2 = (double**)createContiguousMatrix(n, n, sizeof(double));
+	if (mat2 == NULL) {
+		return -2;
+	}
+
 	for (int a = 0; a < n; a++) {
 		for (int b = 0; b < n; b++) {
 			mat2[a][b] = (double)mat[a][b];
 		}
 	}
-   
+
 	double det = 1.0;
 	int sign = 1;
 
@@ -331,8 +342,9 @@ double calculateDeterminant(int** mat, int n)
 		}
 
 		if (fabs(mat2[Maxrow][b]) < DBL_EPSILON) {
-			freeContiguousMatrix(mat2);
-			return 0.0;
+			freeContiguousMatrix((void**)mat2);
+			*result = 0.0;
+			return 1;
 		}
 
 		//判断并处理行列式的行交换
@@ -360,6 +372,7 @@ double calculateDeterminant(int** mat, int n)
 		det *= mat2[a][a];
 	}
 
-	freeContiguousMatrix(mat2);
-	return det * sign;
+	freeContiguousMatrix((void**)mat2);
+	*result = det * sign;
+	return 1;
 }

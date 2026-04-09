@@ -1,7 +1,8 @@
-#include<stdio.h>
-#include<limits.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "get.h"
 
 char* skip_midspaces(char* x)
@@ -159,9 +160,13 @@ void get_twochoice(char* x)
 	}
 }                                      //用来做获取用户的二选一
 
-void get_array_len(int* len)
+void get_shape_dimensions(int ndim, int* shape)
 {
-
+	switch (ndim) {
+	case 1:
+		printf("输入一维数组的长度:\n");
+		get_valid_int(shape[0]);
+	}
 }
 
 //用来获取二维数组的行列数

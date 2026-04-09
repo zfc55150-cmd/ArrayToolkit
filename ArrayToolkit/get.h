@@ -7,6 +7,7 @@ int get_int(int* a);
 void get_valid_int(int* x);
 int get_char(char* x);
 void get_valid_char(char* x);
+void get_shape_dimensions(int ndim, int* shape);
 void get_twochoice(char* x);
 void get_matrix_dimensions(int* row, int* col);
 
