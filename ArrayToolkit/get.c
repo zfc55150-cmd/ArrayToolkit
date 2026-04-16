@@ -165,7 +165,7 @@ void get_shape_dimensions(int ndim, int* shape)
 	switch (ndim) {
 	case 1:
 		printf("输入一维数组的长度:\n");
-		get_valid_int(shape[0]);
+		get_valid_int(&shape[0]);
 	}
 }
 

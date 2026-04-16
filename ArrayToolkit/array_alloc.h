@@ -1,6 +1,10 @@
 #ifndef array_alloc_h
 #define array_alloc_h
 
+#include <stddef.h>
+
+typedef struct Node Linklist;
+
 void** createContiguousMatrix(int row, int col,size_t element_size);
 void freeContiguousMatrix(void** mat);
 int* get_array(int* len);

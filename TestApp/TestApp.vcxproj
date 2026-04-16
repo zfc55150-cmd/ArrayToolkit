@@ -127,8 +127,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArrayToolkit.h" />
+    <ClInclude Include="Command.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Command.c" />
     <ClCompile Include="test.c" />
   </ItemGroup>
   <ItemGroup>

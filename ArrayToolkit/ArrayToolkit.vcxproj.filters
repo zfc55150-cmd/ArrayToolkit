@@ -24,6 +24,9 @@
     <ClCompile Include="get.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="list.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array_alloc.h">
@@ -33,6 +36,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="get.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="list.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

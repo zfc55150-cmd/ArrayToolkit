@@ -22,11 +22,13 @@
     <ClCompile Include="array_alloc.c" />
     <ClCompile Include="array_core.c" />
     <ClCompile Include="get.c" />
+    <ClCompile Include="list.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="array_alloc.h" />
     <ClInclude Include="array_core.h" />
     <ClInclude Include="get.h" />
+    <ClInclude Include="list.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

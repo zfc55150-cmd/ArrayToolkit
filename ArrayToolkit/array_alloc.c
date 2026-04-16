@@ -6,6 +6,8 @@
 #include "get.h"
 #include "array_alloc.h"
 
+
+
 //获取一个自定义长度的一维数组
 int* get_array(int* len)
 {

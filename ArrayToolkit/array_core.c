@@ -376,3 +376,5 @@ int calculateDeterminant(int** mat, int n, double* result)
 	*result = det * sign;
 	return 1;
 }
+
+

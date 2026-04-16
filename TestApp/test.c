@@ -4,107 +4,47 @@
 #include <windows.h>
 
 #include "ArrayToolkit.h"
+#include "Command.h"
 
-#define INIT_OBJ(type) ((type*)calloc(1,sizeof(type)))
 
-typedef struct Node {
-	void* arr;
-	int ndim;
-	int* shape;
-	struct Node* next;
-}Linklist;
+Command no_arr_cmd[] = {
+	{"获取一个一维数组\n",get_array},
+	{"获取一个二维数组\n",get_matrix},
+	{"退出\n",cmd_exit}
+};
 
-void error_freelist(Linklist* head)
-{
-	while (head != NULL) {
-		Linklist* temp = head->next;
-		if (head->arr != NULL) {
-			if (head->ndim == 2) {
-				void** mat = (void**)head->arr;
-				free(mat[0]);
-			}
-		}
-
-		free(head->arr);
-		free(head->shape);
-		free(head);
-		head = temp;
-	}
-}
-
-Linklist* get_arrlist(int len)
-{
-	Linklist* head = INIT_OBJ(Linklist);
-	if (head == NULL) {
-		return NULL;
-	}
-
-	Linklist* tail = head;
-	for (int a = 1; a <= len; a++) {
-		Linklist* new_node = INIT_OBJ(Linklist);
-		if (new_node == NULL) {
-			error_freelist(head);
-			return NULL;
-		}
-
-		char choice;
-		printf("要传入什么类型的数组：A/a一维数组；B/b二维数组\n");
-		get_twochoice(&choice);
-
-		if (choice == 'a' || choice == 'A') {
-			new_node->ndim = 1;
-			new_node->shape = (int*)malloc(new_node->ndim * sizeof(int));
-			if (new_node->shape == NULL) {
-				free(new_node);
-				error_freelist(head);
-				exit(1);
-			}
-			new_node->arr = get_array(&(new_node->shape[0]));
-		}
-		else {
-			new_node->ndim = 2;
-			new_node->shape = (int*)malloc(new_node->ndim * sizeof(int));
-			if (new_node->shape == NULL) {
-				free(new_node);
-				error_freelist(head);
-				exit(1);
-			}
-			get_matrix_dimensions(&(new_node->shape[0]), &(new_node->shape[1]));
-			new_node->arr = get_matrix(new_node->shape[0], new_node->shape[1]);
-		}
-		if (new_node->arr == NULL) {
-			free(new_node->shape);
-			free(new_node);
-			error_freelist(head);
-			return NULL;
-		}
-
-		tail->next = new_node;
-		tail = new_node;
-	}
-
-	return head;
-}
-
-void print_arrlist(Linklist* head)
-{
-	printf("以下是数组链表\n");
-	Linklist* curr = head->next;
-	int count = 1;
-	while (curr != NULL) {
-		printf("第%d个数组: \n", count++);
-		if (curr->ndim == 1) {
-			print_array((int*)curr->arr, curr->shape[0]);
-		}
-		else if (curr->ndim == 2) {
-			print_matrix((int**)curr->arr, curr->shape[0], curr->shape[1]);
-		}
-		curr = curr->next;
-	}
-}
-
+Command has_arr_cmd[] = {
+	{"数组操作一\n",print_array},
+	{"数组操作二\n",reverse_array}
+};
 int main(void)
 {
 	SetConsoleOutputCP(65001);
-	print_arrlist(get_arrlist(1));
+	SystemState state = { .running = 1,.count=0 };
+	int len1 = sizeof(no_arr_cmd) / sizeof(no_arr_cmd[0]);
+	int len2 = sizeof(has_arr_cmd) / sizeof(has_arr_cmd[0]);
+	int choice;
+	while (state.running) {
+		print_menu(&state);
+		if (state.count <= 0) {
+			Menu menu = { no_arr_cmd,len1 };
+			print_Command(&menu);
+			get_valid_int(&choice);
+			while (choice <= 0 || choice > len1) {
+				print_Command(&menu);
+				get_valid_int(&choice);
+			}
+			no_arr_cmd[choice - 1].execute(&state);
+		}
+		else {
+			Menu menu = { has_arr_cmd,len2 };
+			print_Command(&menu);
+			get_valid_int(&choice);
+			while (choice <= 0 || choice > len2) {
+				print_Command(&menu);
+				get_valid_int(&choice);
+			}
+			has_arr_cmd[choice - 1].execute(&state);
+		}
+	}
 }
