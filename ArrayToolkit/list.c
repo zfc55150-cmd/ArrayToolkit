@@ -9,44 +9,6 @@
 
 #define INIT_OBJ(type) ((type*)calloc(1,sizeof(type)))
 
-//用来存储一维数组信息
-typedef struct Array1D {
-	int* arr;
-	int len;
-}Array1D;
-
-//用来存储二维数组信息
-typedef struct Array2D {
-	int** mat;
-	int row;
-	int col;
-}Array2D;
-
-//用来存储数组类型信息
-typedef enum Arraytype{
-	Array_1D,
-	Array_2D
-}ArrayType;
-
-//用来存储一维数组或二维数组
-typedef union ArrayData{
-	Array1D array;
-	Array2D matrix;
-}ArrayData;
-
-//用链表来存储数组链表
-typedef struct Node {
-	ArrayType type;
-	ArrayData data;
-	struct Node* next;
-}Node;
-
-//系统状态栏
-typedef struct {
-	Node* head;
-	int count;
-	bool running;
-}SystemState;
 
 //用来在链表出现错误时，释放链表内存
 void free_list(Node* head)
