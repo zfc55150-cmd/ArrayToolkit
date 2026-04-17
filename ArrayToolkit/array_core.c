@@ -378,3 +378,4 @@ int calculateDeterminant(int** mat, int n, double* result)
 }
 
 
+

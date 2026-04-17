@@ -6,16 +6,13 @@
 #include "ArrayToolkit.h"
 #include "Command.h"
 
-
 Command no_arr_cmd[] = {
-	{"获取一个一维数组\n",get_array},
-	{"获取一个二维数组\n",get_matrix},
+	{"获取一个一维数组\n",cmd_get_array},
 	{"退出\n",cmd_exit}
 };
 
 Command has_arr_cmd[] = {
-	{"数组操作一\n",print_array},
-	{"数组操作二\n",reverse_array}
+	{ "退出\n",cmd_exit }
 };
 int main(void)
 {
@@ -47,4 +44,5 @@ int main(void)
 			has_arr_cmd[choice - 1].execute(&state);
 		}
 	}
+	printf("程序运行结束，正常退出\n");
 }

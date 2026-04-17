@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "get.h"
 #include "array_alloc.h"
@@ -8,45 +9,87 @@
 
 #define INIT_OBJ(type) ((type*)calloc(1,sizeof(type)))
 
+//用来存储一维数组信息
+typedef struct Array1D {
+	int* arr;
+	int len;
+}Array1D;
+
+//用来存储二维数组信息
+typedef struct Array2D {
+	int** mat;
+	int row;
+	int col;
+}Array2D;
+
+//用来存储数组类型信息
+typedef enum Arraytype{
+	Array_1D,
+	Array_2D
+}ArrayType;
+
+//用来存储一维数组或二维数组
+typedef union ArrayData{
+	Array1D array;
+	Array2D matrix;
+}ArrayData;
+
+//用链表来存储数组链表
 typedef struct Node {
-	void* arr;
-	int ndim;
-	int* shape;
+	ArrayType type;
+	ArrayData data;
 	struct Node* next;
-}Linklist;
+}Node;
+
+//系统状态栏
+typedef struct {
+	Node* head;
+	int count;
+	bool running;
+}SystemState;
 
 //用来在链表出现错误时，释放链表内存
-void error_freelist(Linklist* head)
+void free_list(Node* head)
 {
-	while (head != NULL) {
-		Linklist* temp = head->next;
-		if (head->arr != NULL) {
-			if (head->ndim == 2) {
-				void** mat = (void**)head->arr;
-				free(mat[0]);
+	if (head == NULL) {
+		return;
+	}
+
+	Node* cur = head->next;
+	while (cur != NULL) {
+		
+		Node* temp = cur->next;
+		if (cur->type== Array_1D) {
+			if (cur->data.array.arr!=NULL) {
+				free(cur->data.array.arr);
 			}
 		}
 
-		free(head->arr);
-		free(head->shape);
-		free(head);
-		head = temp;
+		else if(cur->type==Array_2D){
+			if (cur->data.matrix.mat != NULL) {
+				freeContiguousMatrix(cur->data.matrix.mat);
+			}
+		}
+
+		free(cur);
+		cur = temp;
 	}
+	free(head);
 }
 
 //用来获取一个数组链表
-Linklist* get_arrlist(int len)
+Node* get_arrlist(int len)
 {
-	Linklist* head = INIT_OBJ(Linklist);
+	Node* head = INIT_OBJ(Node);
 	if (head == NULL) {
 		return NULL;
 	}
 
-	Linklist* tail = head;
+	Node* tail = head;
 	for (int a = 1; a <= len; a++) {
-		Linklist* new_node = INIT_OBJ(Linklist);
+		Node* new_node = INIT_OBJ(Node);
 		if (new_node == NULL) {
-			error_freelist(head);
+			free_list(head);
 			return NULL;
 		}
 
@@ -55,31 +98,24 @@ Linklist* get_arrlist(int len)
 		get_twochoice(&choice);
 
 		if (choice == 'a' || choice == 'A') {
-			new_node->ndim = 1;
-			new_node->shape = (int*)malloc(new_node->ndim * sizeof(int));
-			if (new_node->shape == NULL) {
+			new_node->type = Array_1D;
+			new_node->data.array.arr = get_array(&(new_node->data.array.len));
+			if (new_node->data.array.arr == NULL) {
 				free(new_node);
-				error_freelist(head);
-				exit(1);
+				free_list(head);
+				return NULL;
 			}
-			new_node->arr = get_array(&(new_node->shape[0]));
 		}
 		else {
-			new_node->ndim = 2;
-			new_node->shape = (int*)malloc(new_node->ndim * sizeof(int));
-			if (new_node->shape == NULL) {
+			new_node->type = Array_2D;
+			get_matrix_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
+			new_node->data.matrix.mat = get_matrix(new_node->data.matrix.row, new_node->data.matrix.col);
+			if (new_node->data.matrix.mat == NULL) {
 				free(new_node);
-				error_freelist(head);
-				exit(1);
+				free_list(head);
+				return NULL;
 			}
-			get_matrix_dimensions(&(new_node->shape[0]), &(new_node->shape[1]));
-			new_node->arr = get_matrix(new_node->shape[0], new_node->shape[1]);
-		}
-		if (new_node->arr == NULL) {
-			free(new_node->shape);
-			free(new_node);
-			error_freelist(head);
-			return NULL;
+
 		}
 
 		tail->next = new_node;
@@ -89,19 +125,19 @@ Linklist* get_arrlist(int len)
 	return head;
 }
 
-void print_arrlist(Linklist* head)
+void print_arrlist(Node* head)
 {
 	printf("以下是数组链表\n");
-	Linklist* curr = head->next;
+	Node* cur = head->next;
 	int count = 1;
-	while (curr != NULL) {
+	while (cur != NULL) {
 		printf("第%d个数组: \n", count++);
-		if (curr->ndim == 1) {
-			print_array((int*)curr->arr, curr->shape[0]);
+		if (cur->type == Array_1D) {
+			print_array(cur->data.array.arr, cur->data.array.len);
 		}
-		else if (curr->ndim == 2) {
-			print_matrix((int**)curr->arr, curr->shape[0], curr->shape[1]);
+		else if (cur->type==Array_2D) {
+			print_matrix(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
 		}
-		curr = curr->next;
+		cur = cur->next;
 	}
 }

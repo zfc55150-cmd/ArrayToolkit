@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 
-typedef struct Node Linklist;
 
 void** createContiguousMatrix(int row, int col,size_t element_size);
 void freeContiguousMatrix(void** mat);

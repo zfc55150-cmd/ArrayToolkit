@@ -2,58 +2,9 @@
 #include <stdio.h>
 
 #include "Command.h"
+#include "ArrayToolkit.h"
 
-
-//用来存储一维数组信息
-typedef struct {
-	int* arr;
-	int len;
-}Array1D;
-
-//用来存储二维数组信息
-typedef struct {
-	int** mat;
-	int row;
-	int col;
-}Array2D;
-
-//用来存储数组类型信息
-typedef enum {
-	Array_1D,
-	Array_2D
-}ArrayType;
-
-//用来存储一维数组或二维数组
-typedef union {
-	Array1D arr;
-	Array2D mat;
-}ArrayData;
-
-//用链表来存储数组链表
-typedef struct Node {
-	ArrayType type;
-	ArrayData data;
-	struct Node* next;
-}Node;
-
-//系统状态栏
-typedef struct {
-	Node* head;
-	int count;
-	bool running;
-}SystemState;
-
-
-
-typedef struct {
-	const char* description;
-	commandfunc execute;
-}Command;
-
-typedef struct {
-	Command* cmd;
-	int count;
-}Menu;
+#define INIT_OBJ(type) ((type*)calloc(1,sizeof(type)))
 
 void print_menu(SystemState* state)
 {
@@ -72,5 +23,24 @@ void print_Command(Menu* menu)
 void cmd_exit(SystemState* state)
 {
 	state->running = false;
+}
+
+void cmd_get_array(SystemState* state)
+{
+	Node* new_node = INIT_OBJ(Node);
+	new_node->type = Array_1D;
+	new_node->data.array.arr = get_array(&(new_node->data.array.len));
+	if (new_node->data.array.arr == NULL) {
+		free(new_node);
+		return;
+	}
+
+	Node* cur = state->head;
+	while (cur->next != NULL) {
+		cur = cur->next;
+	}
+	
+	cur->next = new_node;
+	state->count++;
 }
 
