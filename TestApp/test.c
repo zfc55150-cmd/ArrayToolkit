@@ -6,54 +6,38 @@
 #include "ArrayToolkit.h"
 #include "Command.h"
 
-Command no_arr_cmd[] = {
-	{"获取一个一维数组\n",cmd_get_array},
-	{"获取一个二维数组\n",cmd_get_matrix},
-	{"退出\n",cmd_exit}
-};
-
-Command has_arr_cmd[] = {
-	{"获取一个一维数组\n",cmd_get_array},
-	{"获取一个二维数组\n",cmd_get_matrix},
-	{"打印一维数组\n",cmd_print_array},
-	{ "退出\n",cmd_exit }
+Command cmd[] = {
+    {"获取一个一维数组",cmd_get_array,always_available},
+	{"获取一个二维数组",cmd_get_array2D,always_available},
+	{"获取一个n阶矩阵",cmd_get_matrix,always_available},
+	{"打印一个一维数组",cmd_print_array,has_array1D},
+	{"打印一个二维数组",cmd_print_array2D,has_array2D},
+	{"计算一个方阵的行列式",cmd_calculate_det,has_matrix},
+	{ "退出",cmd_exit ,always_available}
 };
 
 int main(void)
 {
 	SetConsoleOutputCP(65001);
-	SystemState state = { .running = 1,.count=0 };
+	SystemState state = { .running = 1,.count = 0 ,.stats = (DataStats){0} };
 	state.head = (Node*)calloc(1, sizeof(Node));
 	if (state.head == NULL) {
 		printf("离谱，头指针生成失败\n");
 		exit(1);
 	}
-	 
-	int len1 = sizeof(no_arr_cmd) / sizeof(no_arr_cmd[0]);
-	int len2 = sizeof(has_arr_cmd) / sizeof(has_arr_cmd[0]);
+
+	int len = sizeof(cmd) / sizeof(cmd[0]);
 	int choice;
 	print_menu();
 	while (state.running) {
-		if (state.count <= 0) {
-			Menu menu = { no_arr_cmd,len1 };
-			print_Command(&menu,&state);
+			Menu menu = { cmd,len };
+			print_Command(&menu, &state);
 			get_valid_int(&choice);
-			while (choice <= 0 || choice > len1) {
-				print_Command(&menu,&state);
+			while (choice <= 0 || choice > len||!(menu.cmd[choice-1].is_available(&state))) {
+				print_Command(&menu, &state);
 				get_valid_int(&choice);
 			}
-			no_arr_cmd[choice - 1].execute(&state);
-		}
-		else {
-			Menu menu = { has_arr_cmd,len2 };
-			print_Command(&menu,&state);
-			get_valid_int(&choice);
-			while (choice <= 0 || choice > len2) {
-				print_Command(&menu,&state);
-				get_valid_int(&choice);
-			}
-			has_arr_cmd[choice - 1].execute(&state);
-		}
+			cmd[choice - 1].execute(&state);
 	}
 	printf("程序运行结束，正常退出\n");
 }

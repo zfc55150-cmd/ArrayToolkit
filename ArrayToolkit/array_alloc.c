@@ -108,14 +108,14 @@ int* get_array(int* len)
 }
 
 //用于获取自定义的二维数组，但只支持一行输入
-int** get_A_matrix(int row, int col)
+int** get_A_array2D(int row, int col)
 {
 	size_t total, cap;
 	total = (size_t)row * col;
 	cap = total * 12 + 2;
 
 	//动态生成二维数组
-	int** mat = (int**)createContiguousMatrix(row, col,sizeof(int));
+	int** mat = (int**)createContiguousArray2D(row, col,sizeof(int));
 	if (mat == NULL) {
 		printf("二维数组生成失败，出问题了\n");
 		return NULL;
@@ -217,20 +217,19 @@ int** get_A_matrix(int row, int col)
 
 	} while (flag);
 
-	printf("输入成功！\n");
 	free(buf);
 	return mat;
 }
 
 //用于获取自定义的二维数组，多行输入
-int** get_B_matrix(int row, int col)
+int** get_B_array2D(int row, int col)
 {
 	size_t cap, total;
 	total = (size_t)row * col;
 	cap = (size_t)col * 12 + 2;
 
 	//动态生成二维数组
-	int** mat = (int**)createContiguousMatrix(row, col,sizeof(int));
+	int** mat = (int**)createContiguousArray2D(row, col,sizeof(int));
 	if (mat == NULL) {
 		printf("二维数组生成失败，出问题了\n");
 		return NULL;
@@ -321,13 +320,12 @@ int** get_B_matrix(int row, int col)
 		x++;
 	}
 
-	printf("输入成功！\n");
 	free(buf);
 	return mat;
 }
 
 //用于自主选择二维数组的输入方式
-int** get_matrix(int row, int col)
+int** get_array2D(int row, int col)
 {
 	char choice;
 
@@ -336,16 +334,16 @@ int** get_matrix(int row, int col)
 
 	if (choice == 'A' || choice == 'a')
 	{
-		return get_A_matrix(row, col);
+		return get_A_array2D(row, col);
 	}
 	else 
 	{
-		return get_B_matrix(row, col);
+		return get_B_array2D(row, col);
 	}
 }
 
 //用于创建一个连续存储的二维数组
-void** createContiguousMatrix(int row, int col,size_t element_size)
+void** createContiguousArray2D(int row, int col,size_t element_size)
 {
 	//生成二维数组的行指针
 	void** mat=(void**)malloc((size_t)row * sizeof(void*));
@@ -369,7 +367,7 @@ void** createContiguousMatrix(int row, int col,size_t element_size)
 }
 
 //用于释放一个连续存储的二维数组的内存
-void freeContiguousMatrix(void** mat) 
+void freeContiguousArray2D(void** mat) 
 {
 	if (mat != NULL) {
 		free(mat[0]);
@@ -378,7 +376,7 @@ void freeContiguousMatrix(void** mat)
 }
 
 //用来获取一个自定义大小的行列式
-int** get_Determinant(int* n)
+int** get_determinant(int* n)
 {
 	do {
 		printf("请输入行列式是几阶的\n");
@@ -389,7 +387,7 @@ int** get_Determinant(int* n)
 		}
 		printf("行列式大小要大于零，请重新输入\n");
 	} while (1);
-	int** mat = (int**)get_matrix(*n, *n);
+	int** mat = (int**)get_array2D(*n, *n);
 
 	return mat;
 }

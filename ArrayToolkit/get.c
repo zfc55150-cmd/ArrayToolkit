@@ -153,8 +153,7 @@ void get_valid_char(char* x)
 void get_twochoice(char* x)
 {
 	get_valid_char(x);
-	while (*x != 'A' && *x != 'B' && *x != 'a' && *x != 'b')
-	{
+	while (*x != 'A' && *x != 'B' && *x != 'a' && *x != 'b'){
 		printf("输入有问题，请重新选择（A/a或者B/b）：\n");
 		get_valid_char(x);
 	}
@@ -170,7 +169,7 @@ void get_shape_dimensions(int ndim, int* shape)
 }
 
 //用来获取二维数组的行列数
-void get_matrix_dimensions(int* row, int* col)
+void get_array2D_dimensions(int* row, int* col)
 {
 	size_t cap, total;
 	do

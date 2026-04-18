@@ -22,14 +22,14 @@ void free_list(Node* head)
 		
 		Node* temp = cur->next;
 		if (cur->type== Array_1D) {
-			if (cur->data.array.arr!=NULL) {
-				free(cur->data.array.arr);
+			if (cur->data.array1D.arr!=NULL) {
+				free(cur->data.array1D.arr);
 			}
 		}
 
 		else if(cur->type==Array_2D){
-			if (cur->data.matrix.mat != NULL) {
-				freeContiguousMatrix(cur->data.matrix.mat);
+			if (cur->data.array2D.arr != NULL) {
+				freeContiguousArray2D(cur->data.array2D.arr);
 			}
 		}
 
@@ -61,8 +61,8 @@ Node* get_arrlist(int len)
 
 		if (choice == 'a' || choice == 'A') {
 			new_node->type = Array_1D;
-			new_node->data.array.arr = get_array(&(new_node->data.array.len));
-			if (new_node->data.array.arr == NULL) {
+			new_node->data.array1D.arr = get_array(&(new_node->data.array1D.len));
+			if (new_node->data.array1D.arr == NULL) {
 				free(new_node);
 				free_list(head);
 				return NULL;
@@ -70,9 +70,9 @@ Node* get_arrlist(int len)
 		}
 		else {
 			new_node->type = Array_2D;
-			get_matrix_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
-			new_node->data.matrix.mat = get_matrix(new_node->data.matrix.row, new_node->data.matrix.col);
-			if (new_node->data.matrix.mat == NULL) {
+			get_array2D_dimensions(&(new_node->data.array2D.row), &(new_node->data.array2D.col));
+			new_node->data.array2D.arr = get_array2D(new_node->data.array2D.row, new_node->data.array2D.col);
+			if (new_node->data.array2D.arr == NULL) {
 				free(new_node);
 				free_list(head);
 				return NULL;
@@ -95,10 +95,10 @@ void print_arrlist(Node* head)
 	while (cur != NULL) {
 		printf("第%d个数组: \n", count++);
 		if (cur->type == Array_1D) {
-			print_array(cur->data.array.arr, cur->data.array.len);
+			print_array(cur->data.array1D.arr, cur->data.array1D.len);
 		}
 		else if (cur->type==Array_2D) {
-			print_matrix(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+			print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
 		}
 		cur = cur->next;
 	}

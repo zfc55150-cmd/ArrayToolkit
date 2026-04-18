@@ -11,35 +11,59 @@
 void print_menu()
 {
 	printf("这是一个数组工具交互系统\n");
-
 }
-
-int count_array(SystemState* state)
-{
-	int count = 0;
-	Node* cur = state->head->next;
-
-	while (cur != NULL) {
-		if (cur->type == Array_1D) count++;
-		cur = cur->next;
-	}
-
-	return count;
-}                                        //
 
 void print_Command(Menu* menu, SystemState* state)
 {
-	int count = count_array(state);
-	printf("现在拥有%d个数组(%d个一维数组，%d个二维数组）,你可以进行以下操作：\n", state->count, count, state->count - count);
+	printf("现在拥有%d个数组(%d个一维数组，%d个二维数组）和%d个矩阵,你可以进行以下操作：\n",
+		state->count,
+		state->stats.array1D_count,
+		state->stats.array2D_count,
+		state->stats.matrix_count);
 	printf("==============================================\n");
 	for (int a = 0; a < menu->count; a++) {
+		bool check = true;
+		if (menu->cmd[a].is_available != NULL) {
+			check = menu->cmd[a].is_available(state);
+		}
+
 		printf("%d.%s", a + 1, menu->cmd[a].description);
+		if (!check) {
+			printf("（当前状态不可用）");
+		}
+		printf("\n");
 	}
 }
 
 void cmd_exit(SystemState* state)
 {
 	state->running = false;
+}
+
+bool always_available(const SystemState* head)
+{
+	return true;
+}
+
+bool has_array1D(const SystemState* state)
+{
+	if (state->stats.array1D_count > 0)
+		return true;
+	return false;
+}
+
+bool has_array2D(const SystemState* state)
+{
+	if (state->stats.array2D_count > 0)
+		return true;
+	return false;
+}
+
+bool has_matrix(const SystemState* state)
+{
+	if (state->stats.matrix_count > 0)
+		return true;
+	return false;
 }
 
 void state_tail_insert(SystemState* state, Node* new_node)
@@ -59,13 +83,79 @@ void cmd_get_array(SystemState* state)
 	assert(new_node != NULL);
 
 	new_node->type = Array_1D;
-	new_node->data.array.arr = get_array(&(new_node->data.array.len));
-	if (new_node->data.array.arr == NULL) {
+	new_node->data.array1D.arr = get_array(&(new_node->data.array1D.len));
+	if (new_node->data.array1D.arr == NULL) {
 		free(new_node);
 		return;
 	}
 
+	state->stats.array1D_count++;
 	state_tail_insert(state, new_node);
+}
+
+void cmd_get_array2D(SystemState* state)
+{
+	Node* new_node = INIT_OBJ(Node);
+	assert(new_node != NULL);
+
+	new_node->type = Array_2D;
+	get_array2D_dimensions(&(new_node->data.array2D.row), &(new_node->data.array2D.col));
+	new_node->data.array2D.arr = get_array2D(new_node->data.array2D.row, new_node->data.array2D.col);
+	if (new_node->data.array2D.arr == NULL) {
+		free(new_node);
+		return;
+	}
+
+	state->stats.array2D_count++;
+	state_tail_insert(state, new_node);
+}
+
+void cmd_print_array(SystemState* state)
+{
+	if (state->stats.array1D_count == 0)
+	{
+		printf("还没有一维数组，请先创建一个吧\n");
+		return;
+	}
+
+	Node* cur = state->head->next;
+	while (cur != NULL && cur->type != Array_1D) {
+		cur = cur->next;
+	}
+
+	if (cur == NULL) {
+		printf("数据有问题，出错了\n");
+		return;
+	}
+
+	int index;
+	if (state->stats.array1D_count == 1) {
+		printf("唯一的一个一维数组：");
+		print_array(cur->data.array1D.arr, cur->data.array1D.len);
+		printf("\n");
+		return;
+	}
+
+	printf("总共有%d个一维数组，要打印第几个:\n", state->stats.array1D_count);
+	get_valid_int(&index);
+	while (index<1 || index>state->stats.array1D_count) {
+		printf("输入范围不对，请重新选择：\n");
+		get_valid_int(&index);
+	}
+
+	int a = 0;
+	while (cur != NULL) {
+		if (cur->type == Array_1D) {
+			a++;
+			if (a == index) {
+				printf("第%d个一维数组：", index);
+				print_array(cur->data.array1D.arr, cur->data.array1D.len);
+				printf("\n");
+				return;
+			}
+		}
+		cur = cur->next;
+	}
 }
 
 void cmd_get_matrix(SystemState* state)
@@ -73,27 +163,147 @@ void cmd_get_matrix(SystemState* state)
 	Node* new_node = INIT_OBJ(Node);
 	assert(new_node != NULL);
 
-	new_node->type = Array_2D;
-	get_matrix_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
-	new_node->data.matrix.mat = get_matrix(new_node->data.matrix.row, new_node->data.matrix.col);
-	if (new_node->data.matrix.mat == NULL) {
+	new_node->type = matrix;
+	get_array2D_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
+	new_node->data.matrix.mat = get_array2D(new_node->data.matrix.row, new_node->data.matrix.col);
+	if (new_node == NULL) {
 		free(new_node);
 		return;
 	}
 
+	state->stats.matrix_count++;
 	state_tail_insert(state, new_node);
 }
 
-void cmd_print_array(SystemState* state)
+void cmd_print_array2D(SystemState* state)
 {
+	if (state->stats.array2D_count < 1) {
+		printf("还没有二维数组，先创建一个吧\n");
+		return;
+	}
+
 	Node* cur = state->head->next;
-	int a = 1;
-	while (cur != NULL) {
-		printf("第%d个一维数组：",a++);
-		print_array(cur->data.array.arr, cur->data.array.len);
-		printf("\n");
+	while (cur != NULL && cur->type != Array_2D) {
 		cur = cur->next;
 	}
+
+	if (cur == NULL) {
+		printf("什么破数据，数据有问题\n");
+		return;
+	}
+
+	int index;
+	if (state->stats.array2D_count == 1) {
+		printf("唯一的一个二维数组：\n");
+		print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
+		printf("\n");
+		return;
+	}
+
+	printf("现在有%d个二维数组，要打印哪一个:\n", state->stats.array2D_count);
+	get_valid_int(&index);
+	while (index<1 || index>state->stats.array2D_count) {
+		printf("范围不对，请重新选择:\n");
+		get_valid_int(&index);
+	}
+
+	int a = 0;
+	while (cur != NULL) {
+		if (cur->type == Array_2D) {
+			a++;
+			if (a == index) {
+				printf("第%d个二维数组：\n", index);
+				print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
+				printf("\n");
+				return;
+			}
+		}
+		cur = cur->next;
+	}
+}
+
+void cmd_calculate_det(SystemState* state)
+{
+	if (state->stats.matrix_count == 0) {
+		printf("还没有矩阵呢，先创建一个吧\n");
+		return;
+	}
+
+	Node* temp = state->head->next;
+	int* idx = (int*)calloc(state->stats.matrix_count,sizeof(int));
+	if (idx == NULL) {
+		printf("方阵位置数组生成失败，退出吧\n");
+		return;
+	}
+
+	int matrix_index = 0;
+	int square_count = 0;
+	while (temp != NULL ) {
+		if (temp->type == matrix) {
+			matrix_index++;
+			if (temp->data.matrix.row == temp->data.matrix.col) {
+				idx[square_count++] = matrix_index;
+			}
+		}
+		temp = temp->next;
+	}
+
+	if (square_count==0) {
+		printf("没有矩阵可以取行列式\n");
+		free(idx);
+		return;
+	}
+	
+	int target_index;
+	printf("可以求行列式的矩阵有：");
+	for (int a = 0; a < square_count; a++) {
+		printf("%d ", idx[a]);
+	}
+	printf("\n");
+
+	printf("选择一个吧：\n");
+	
+	bool flag = true;
+	while (flag) {
+		get_valid_int(&target_index);
+		for (int a = 0; a < square_count; a++) {
+			if (target_index == idx[a]) {
+				flag = false;
+				break;
+			}
+		}
+
+		if (flag) {
+			printf("别搞，输入有问题,重输：\n");
+		}
+	}
+
+	double result;
+	matrix_index = 0;
+	Node* cur = state->head->next;
+	while (cur != NULL) {
+		if (cur->type == matrix) {
+			matrix_index++;
+		}
+
+		if (matrix_index == target_index) {
+			bool status = calculate_det(cur->data.matrix.mat, cur->data.matrix.row, &result);
+			if (status) {
+				printf("第%d个矩阵取行列式的值为：%lf\n", target_index, result);
+				free(idx);
+				return;
+			}
+
+			printf("计算函数报错，计算失败\n");
+			free(idx);
+			return;
+		}
+
+		cur = cur->next;
+	}
+
+	printf("数据出问题了（没找到第%d个矩阵），别搞了\n",target_index);
+	free(idx);
 }
 
 

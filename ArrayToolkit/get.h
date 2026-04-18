@@ -9,7 +9,7 @@ int get_char(char* x);
 void get_valid_char(char* x);
 void get_shape_dimensions(int ndim, int* shape);
 void get_twochoice(char* x);
-void get_matrix_dimensions(int* row, int* col);
+void get_array2D_dimensions(int* row, int* col);
 
 #endif
 

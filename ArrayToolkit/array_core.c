@@ -75,7 +75,7 @@ void bubble_sort(int* arr, int len)
 }
 
 //用于打印二维数组
-void print_matrix(int** mat, int row, int col)
+void print_array2D(int** mat, int row, int col)
 {
 	int total = row * col;
 
@@ -90,7 +90,7 @@ void print_matrix(int** mat, int row, int col)
 }
 
 //用来将二维数组一维化 (  使用后记得要释放！ ）
-int* matrix_flat(int** mat, int row, int col)
+int* array2D_flat(int** mat, int row, int col)
 {
 	int* flat = (int*)malloc((size_t)row * col * sizeof(int));
 	if (flat == NULL) {
@@ -111,7 +111,7 @@ int* matrix_flat(int** mat, int row, int col)
 }
 
 //用来将一维数组二维化
-int** matrix_unflat(int* flat, int len, int* row, int* col)
+int** array2D_unflat(int* flat, int len, int* row, int* col)
 {
 	if (flat == NULL) {
 		printf("为传入有效的一维数组地址\n");
@@ -138,7 +138,7 @@ int** matrix_unflat(int* flat, int len, int* row, int* col)
 
 	*row = len / *col;
 
-	int** mat = (int**)createContiguousMatrix(*row, *col, sizeof(int));
+	int** mat = (int**)createContiguousArray2D(*row, *col, sizeof(int));
 	if (mat == NULL) {
 		printf("二维数组生成失败，一维数组二维化失败\n");
 		return NULL;
@@ -255,7 +255,7 @@ void array_search_ui(int* arr, int len)
 //用来查找二维数组中的元素
 void matrix_search(int** mat, int row, int col)
 {
-	int* flat = matrix_flat(mat, row, col);
+	int* flat = array2D_flat(mat, row, col);
 	if (flat == NULL) {
 		return;
 	}
@@ -285,7 +285,7 @@ int** transpose_matrix(int** mat, int* row, int* col)
 		return NULL;
 	}
 
-	int** mat2 = (int**)createContiguousMatrix(*col, *row, sizeof(int));
+	int** mat2 = (int**)createContiguousArray2D(*col, *row, sizeof(int));
 	if (mat2 == NULL) {
 		printf("转置辅助矩阵生成失败，转置失败\n");
 		return NULL;
@@ -306,21 +306,21 @@ int** transpose_matrix(int** mat, int* row, int* col)
 }
 
 //用来计算n阶行列式
-int calculateDeterminant(int** mat, int n, double* result)
+bool calculate_det(int** mat, int n, double* result)
 { 
 	//输入检测
 	assert(mat != NULL);
 	assert(n > 0);
-	assert(result == NULL);
+	assert(result != NULL);
 
 	if (mat == NULL || n <= 0 || result == NULL) {
-		return -1;
+		return false;
 	}
 
 	//复制一个相同的二维数组用于计算
-	double** mat2 = (double**)createContiguousMatrix(n, n, sizeof(double));
+	double** mat2 = (double**)createContiguousArray2D(n, n, sizeof(double));
 	if (mat2 == NULL) {
-		return -2;
+		return false;
 	}
 
 	for (int a = 0; a < n; a++) {
@@ -342,9 +342,9 @@ int calculateDeterminant(int** mat, int n, double* result)
 		}
 
 		if (fabs(mat2[Maxrow][b]) < DBL_EPSILON) {
-			freeContiguousMatrix((void**)mat2);
+			freeContiguousArray2D((void**)mat2);
 			*result = 0.0;
-			return 1;
+			return true;
 		}
 
 		//判断并处理行列式的行交换
@@ -372,9 +372,9 @@ int calculateDeterminant(int** mat, int n, double* result)
 		det *= mat2[a][a];
 	}
 
-	freeContiguousMatrix((void**)mat2);
+	freeContiguousArray2D((void**)mat2);
 	*result = det * sign;
-	return 1;
+	return true;
 }
 
 

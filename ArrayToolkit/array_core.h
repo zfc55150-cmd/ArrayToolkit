@@ -1,6 +1,7 @@
 #ifndef array_core_h
 #define array_core_h
 
+#include <stdbool.h>
 
 int** transpose_matrix(int** mat, int* row, int* col);  //返回新的矩阵指针（旧的内存记得自己释放）
 void array_linear_search(int* arr, int len);
@@ -12,9 +13,9 @@ void bubble_sort(int* arr, int len);
 void select_Asort(int* arr, int len);
 void select_Bsort(int* arr, int len);
 void select_sort(int* arr, int len);
-void print_matrix(int** mat, int row, int col);
-int* matrix_flat(int** mat, int row, int col);
-int** matrix_unflat(int* flat, int len,int* row,int* col);
-int calculateDeterminant(int** mat, int n,double* result);  //返回函数运行状态，计算结果存储在result中
+void print_array2D(int** mat, int row, int col);
+int* array2D_flat(int** mat, int row, int col);
+int** array2D_unflat(int* flat, int len,int* row,int* col);
+bool calculate_det(int** mat, int n,double* result);  //返回函数运行状态，计算结果存储在result中
 
 #endif
