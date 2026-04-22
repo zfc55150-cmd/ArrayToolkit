@@ -15,7 +15,7 @@ void print_menu()
 
 void print_Command(Menu* menu, SystemState* state)
 {
-	printf("现在拥有%d个数组(%d个一维数组，%d个二维数组）和%d个矩阵,你可以进行以下操作：\n",
+	printf("现在拥有%d个不同数据(%d个一维数组，%d个二维数组和%d个矩阵),你可以进行以下操作：\n",
 		state->count,
 		state->stats.array1D_count,
 		state->stats.array2D_count,
@@ -166,7 +166,7 @@ void cmd_get_matrix(SystemState* state)
 	new_node->type = matrix;
 	get_array2D_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
 	new_node->data.matrix.mat = get_array2D(new_node->data.matrix.row, new_node->data.matrix.col);
-	if (new_node == NULL) {
+	if (new_node->data.matrix.mat == NULL) {
 		free(new_node);
 		return;
 	}
@@ -230,7 +230,7 @@ void cmd_calculate_det(SystemState* state)
 	}
 
 	Node* temp = state->head->next;
-	int* idx = (int*)calloc(state->stats.matrix_count,sizeof(int));
+	int* idx = (int*)calloc(state->stats.matrix_count, sizeof(int));
 	if (idx == NULL) {
 		printf("方阵位置数组生成失败，退出吧\n");
 		return;
@@ -238,7 +238,7 @@ void cmd_calculate_det(SystemState* state)
 
 	int matrix_index = 0;
 	int square_count = 0;
-	while (temp != NULL ) {
+	while (temp != NULL) {
 		if (temp->type == matrix) {
 			matrix_index++;
 			if (temp->data.matrix.row == temp->data.matrix.col) {
@@ -248,12 +248,12 @@ void cmd_calculate_det(SystemState* state)
 		temp = temp->next;
 	}
 
-	if (square_count==0) {
+	if (square_count == 0) {
 		printf("没有矩阵可以取行列式\n");
 		free(idx);
 		return;
 	}
-	
+
 	int target_index;
 	printf("可以求行列式的矩阵有：");
 	for (int a = 0; a < square_count; a++) {
@@ -262,7 +262,7 @@ void cmd_calculate_det(SystemState* state)
 	printf("\n");
 
 	printf("选择一个吧：\n");
-	
+
 	bool flag = true;
 	while (flag) {
 		get_valid_int(&target_index);
@@ -302,8 +302,122 @@ void cmd_calculate_det(SystemState* state)
 		cur = cur->next;
 	}
 
-	printf("数据出问题了（没找到第%d个矩阵），别搞了\n",target_index);
+	printf("数据出问题了（没找到第%d个矩阵），别搞了\n", target_index);
 	free(idx);
+}
+
+void cmd_matrix_transpose(SystemState* state)
+{
+	assert(state != NULL);
+
+	if (state->stats.matrix_count < 1) {
+		printf("还没有矩阵呢，先创建一个吧\n");
+		return;
+	}
+
+	Node* cur = state->head->next;
+	if (state->stats.matrix_count == 1) {
+		while (cur != NULL) {
+			if (cur->type == matrix) {
+				break;
+			}
+			cur = cur->next;
+		}
+		if (cur == NULL) {
+			printf("数据出问题了，退出吧\n");
+			return;
+		}
+
+		int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
+		if (temp != NULL) {
+			freeContiguousArray2D(cur->data.matrix.mat);
+			cur->data.matrix.mat = temp;
+			printf("矩阵转置成功!\n");
+		}
+		else {
+			printf("数组转置失败，转置函数返回值为NULL\n");
+		}
+		return;
+	}
+
+	int target_mat;
+	printf("有%d个矩阵可以转置，选一个吧(第几个）\n", state->stats.matrix_count);
+	get_valid_int(&target_mat);
+	while (target_mat > state->stats.matrix_count || target_mat < 1) {
+		printf("别搞，第几个?\n");
+		get_valid_int(&target_mat);
+	}
+
+	int mat_index = 0;
+	while (cur != NULL) {
+		if (cur->type == matrix) {
+			mat_index++;
+			if (mat_index == target_mat) {
+				int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
+				if (temp != NULL) {
+					freeContiguousArray2D(cur->data.matrix.mat);
+					cur->data.matrix.mat = temp;
+					printf("矩阵转置成功\n");
+					return;
+				}
+				else {
+					printf("数组转置失败，转置函数返回值为NULL\n");
+				}
+				return;
+			}
+		}
+		cur=cur->next;
+	}
+
+	printf("数据出问题了，退出吧\n");
+	return;
+}
+
+void cmd_print_matrix(SystemState* state)
+{
+	if (state->stats.matrix_count < 1) {
+		printf("还没有二维数组，先创建一个吧\n");
+		return;
+	}
+
+	Node* cur = state->head->next;
+	while (cur != NULL && cur->type != matrix) {
+		cur = cur->next;
+	}
+
+	if (cur == NULL) {
+		printf("什么破数据，数据有问题\n");
+		return;
+	}
+
+	int index;
+	if (state->stats.matrix_count == 1) {
+		printf("唯一的一个矩阵：\n");
+		print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		printf("\n");
+		return;
+	}
+
+	printf("现在有%d个矩阵，要打印哪一个:\n", state->stats.matrix_count);
+	get_valid_int(&index);
+	while (index<1 || index>state->stats.matrix_count) {
+		printf("范围不对，请重新选择:\n");
+		get_valid_int(&index);
+	}
+
+	int a = 0;
+	while (cur != NULL) {
+		if (cur->type == matrix) {
+			a++;
+			if (a == index) {
+				printf("第%d个二维数组：\n", index);
+				print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+				printf("\n");
+				return;
+			}
+		}
+		cur = cur->next;
+	}
 }
 
 

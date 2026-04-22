@@ -9,10 +9,12 @@
 Command cmd[] = {
     {"获取一个一维数组",cmd_get_array,always_available},
 	{"获取一个二维数组",cmd_get_array2D,always_available},
-	{"获取一个n阶矩阵",cmd_get_matrix,always_available},
+	{"获取一个自定义矩阵",cmd_get_matrix,always_available},
 	{"打印一个一维数组",cmd_print_array,has_array1D},
 	{"打印一个二维数组",cmd_print_array2D,has_array2D},
+	{"打印一个矩阵",cmd_print_matrix,has_matrix},
 	{"计算一个方阵的行列式",cmd_calculate_det,has_matrix},
+	{"选择一个矩阵进行转置",cmd_matrix_transpose,has_matrix},
 	{ "退出",cmd_exit ,always_available}
 };
 

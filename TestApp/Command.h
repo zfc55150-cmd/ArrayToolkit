@@ -18,5 +18,7 @@ void cmd_print_array(SystemState* state);
 void cmd_get_matrix(SystemState* state);
 void cmd_print_array2D(SystemState* state);
 void cmd_calculate_det(SystemState* state);
+void cmd_matrix_transpose(SystemState* state);
+void cmd_print_matrix(SystemState* state);
 
 #endif
