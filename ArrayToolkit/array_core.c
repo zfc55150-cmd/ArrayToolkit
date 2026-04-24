@@ -377,5 +377,74 @@ bool calculate_det(int** mat, int n, double* result)
 	return true;
 }
 
+int matrix_rank(int** mat, int row, int col)
+{
+	int rank = row;
+	double** mat2 = (double**)createContiguouseArray2D(row, col, sizeof(double));
+	if (mat2 == NULL) {
+		return -1;
+	}
+
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			mat2[i][j] = (double)mat[i][j];
+		}
+	}
+
+	for (int j = 0; j < col; j++) {
+		int maxrow = j;
+		for (int i = j+1; i < row; i++) {
+			if (fabs(mat2[i][j]) > fabs(mat2[maxrow][j])) {
+				maxrow = i;
+			}
+		}
+
+		if (fabs(mat2[maxrow][j]) < DBL_EPSILON) {
+			rank--;
+		}
+
+		/*if (maxrow != j) {
+			for (int a = 0; a < col; a++) {
+				double temp = mat2[maxrow][a];
+				mat2[maxrow][a] = mat2[j][a];
+				mat2[j][a] = temp;
+			}
+		}
+
+		for (int a = j+1; a < row; a++) {
+			double ratio = mat2[a][j] / mat2[j][j];
+			for (int b = j; b < col; b++) {
+				mat2[a][b] -= ratio * mat2[j][b];
+			}
+		}*/
+	}
+
+	return rank;
+}
+
+int** inverse_matrix(int** mat,int n)
+{
+	double result;
+	if (calculate_det(mat, n, &result) == false || result == 0.0) {
+		retrun NULL;
+	}
+
+	int** temp = createContiguousArray2D(n, 2 * n, sizeof(int));
+	if (temp == NULL) {
+		return NULL;
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < 2 * n; j++) {
+			if (j >= n) {
+				if (j = n + i) temp[i][j] = 1;
+				else temp[i][j] = 0;
+			}
+			temp[i][j] = mat[i][j];
+		}
+	}
+
+
+}
 
 

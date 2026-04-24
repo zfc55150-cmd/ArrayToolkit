@@ -110,6 +110,57 @@ void cmd_get_array2D(SystemState* state)
 	state_tail_insert(state, new_node);
 }
 
+static Node* find_nth_array1D(Node* head, int n)
+{
+	if (head == NULL || n < 1) return NULL;
+
+	Node* cur = head->next;
+	while (cur != NULL) {
+		if (cur->type == Array_1D) {
+			n--;
+			if (n == 0) return cur;
+		}
+
+		cur = cur->next;
+	}
+
+	return NULL;
+}
+
+static Node* find_nth_array2D(Node* head, int n)
+{
+	if (head == NULL || n < 1) return NULL;
+
+	Node* cur = head->next;
+	while (cur != NULL) {
+		if (cur->type == Array_2D) {
+			n--;
+			if (n == 0) return cur;
+		}
+
+		cur = cur->next;
+	}
+
+	return NULL;
+}
+
+static Node* find_nth_matrix(Node* head, int n)
+{
+	if (head == NULL || n < 1) return NULL;
+
+	Node* cur = head->next;
+	while (cur != NULL) {
+		if (cur->type == matrix) {
+			n--;
+			if (n == 0) return cur;
+		}
+
+		cur = cur->next;
+	}
+
+	return NULL;
+}
+
 void cmd_print_array(SystemState* state)
 {
 	if (state->stats.array1D_count == 0)
@@ -118,18 +169,15 @@ void cmd_print_array(SystemState* state)
 		return;
 	}
 
-	Node* cur = state->head->next;
-	while (cur != NULL && cur->type != Array_1D) {
-		cur = cur->next;
-	}
-
-	if (cur == NULL) {
-		printf("数据有问题，出错了\n");
-		return;
-	}
-
+	Node* cur;
 	int index;
 	if (state->stats.array1D_count == 1) {
+		cur = find_nth_array1D(state->head, 1);
+		if (cur == NULL) {
+			printf("数据出问题了，退出吧\n");
+			return;
+		}
+
 		printf("唯一的一个一维数组：");
 		print_array(cur->data.array1D.arr, cur->data.array1D.len);
 		printf("\n");
@@ -143,19 +191,15 @@ void cmd_print_array(SystemState* state)
 		get_valid_int(&index);
 	}
 
-	int a = 0;
-	while (cur != NULL) {
-		if (cur->type == Array_1D) {
-			a++;
-			if (a == index) {
-				printf("第%d个一维数组：", index);
-				print_array(cur->data.array1D.arr, cur->data.array1D.len);
-				printf("\n");
-				return;
-			}
-		}
-		cur = cur->next;
+	cur = find_nth_array1D(state->head, index);
+	if (cur == NULL) {
+		printf("数据出问题了，重开吧\n");
+		return;
 	}
+
+	printf("第%d个一维数组：", index);
+	print_array(cur->data.array1D.arr, cur->data.array1D.len);
+	printf("\n");
 }
 
 void cmd_get_matrix(SystemState* state)
@@ -182,18 +226,10 @@ void cmd_print_array2D(SystemState* state)
 		return;
 	}
 
-	Node* cur = state->head->next;
-	while (cur != NULL && cur->type != Array_2D) {
-		cur = cur->next;
-	}
-
-	if (cur == NULL) {
-		printf("什么破数据，数据有问题\n");
-		return;
-	}
-
+	Node* cur;
 	int index;
 	if (state->stats.array2D_count == 1) {
+		cur = find_nth_array2D(state->head, 1);
 		printf("唯一的一个二维数组：\n");
 		print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
 		printf("\n");
@@ -207,19 +243,11 @@ void cmd_print_array2D(SystemState* state)
 		get_valid_int(&index);
 	}
 
-	int a = 0;
-	while (cur != NULL) {
-		if (cur->type == Array_2D) {
-			a++;
-			if (a == index) {
-				printf("第%d个二维数组：\n", index);
-				print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
-				printf("\n");
-				return;
-			}
-		}
-		cur = cur->next;
-	}
+	cur = find_nth_array2D(state->head, index);
+	printf("第%d个二维数组：\n", index);
+	print_array2D(cur->data.array2D.arr, cur->data.array2D.row, cur->data.array2D.col);
+	printf("\n");
+	return;
 }
 
 void cmd_calculate_det(SystemState* state)
@@ -232,7 +260,7 @@ void cmd_calculate_det(SystemState* state)
 	Node* temp = state->head->next;
 	int* idx = (int*)calloc(state->stats.matrix_count, sizeof(int));
 	if (idx == NULL) {
-		printf("方阵位置数组生成失败，退出吧\n");
+		printf("方阵的位置数组生成失败，退出吧\n");
 		return;
 	}
 
@@ -279,28 +307,17 @@ void cmd_calculate_det(SystemState* state)
 	}
 
 	double result;
-	matrix_index = 0;
-	Node* cur = state->head->next;
-	while (cur != NULL) {
-		if (cur->type == matrix) {
-			matrix_index++;
-		}
-
-		if (matrix_index == target_index) {
-			bool status = calculate_det(cur->data.matrix.mat, cur->data.matrix.row, &result);
-			if (status) {
-				printf("第%d个矩阵取行列式的值为：%lf\n", target_index, result);
-				free(idx);
-				return;
-			}
-
-			printf("计算函数报错，计算失败\n");
-			free(idx);
-			return;
-		}
-
-		cur = cur->next;
+	Node* cur = find_nth_matrix(state->head, target_index);
+	bool status = calculate_det(cur->data.matrix.mat, cur->data.matrix.row, &result);
+	if (status) {
+		printf("第%d个矩阵取行列式的值为：%lf\n", target_index, result);
+		free(idx);
+		return;
 	}
+
+	printf("计算函数报错，计算失败\n");
+	free(idx);
+	return;
 
 	printf("数据出问题了（没找到第%d个矩阵），别搞了\n", target_index);
 	free(idx);
@@ -315,14 +332,9 @@ void cmd_matrix_transpose(SystemState* state)
 		return;
 	}
 
-	Node* cur = state->head->next;
+	Node* cur;
 	if (state->stats.matrix_count == 1) {
-		while (cur != NULL) {
-			if (cur->type == matrix) {
-				break;
-			}
-			cur = cur->next;
-		}
+		cur = find_nth_matrix(state->head, 1);
 		if (cur == NULL) {
 			printf("数据出问题了，退出吧\n");
 			return;
@@ -348,25 +360,19 @@ void cmd_matrix_transpose(SystemState* state)
 		get_valid_int(&target_mat);
 	}
 
-	int mat_index = 0;
-	while (cur != NULL) {
-		if (cur->type == matrix) {
-			mat_index++;
-			if (mat_index == target_mat) {
-				int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
-				if (temp != NULL) {
-					freeContiguousArray2D(cur->data.matrix.mat);
-					cur->data.matrix.mat = temp;
-					printf("矩阵转置成功\n");
-					return;
-				}
-				else {
-					printf("数组转置失败，转置函数返回值为NULL\n");
-				}
-				return;
-			}
+	cur = find_nth_matrix(state->head, target_mat);
+	if (cur != NULL) {
+		int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
+		if (temp != NULL) {
+			freeContiguousArray2D(cur->data.matrix.mat);
+			cur->data.matrix.mat = temp;
+			printf("矩阵转置成功\n");
+			return;
 		}
-		cur=cur->next;
+		else {
+			printf("数组转置失败，转置函数返回值为NULL\n");
+			return;
+		}
 	}
 
 	printf("数据出问题了，退出吧\n");
@@ -380,18 +386,10 @@ void cmd_print_matrix(SystemState* state)
 		return;
 	}
 
-	Node* cur = state->head->next;
-	while (cur != NULL && cur->type != matrix) {
-		cur = cur->next;
-	}
-
-	if (cur == NULL) {
-		printf("什么破数据，数据有问题\n");
-		return;
-	}
-
+	Node* cur;
 	int index;
 	if (state->stats.matrix_count == 1) {
+		cur = find_nth_matrix(state->head, 1);
 		printf("唯一的一个矩阵：\n");
 		print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
 		printf("\n");
@@ -405,19 +403,61 @@ void cmd_print_matrix(SystemState* state)
 		get_valid_int(&index);
 	}
 
-	int a = 0;
-	while (cur != NULL) {
-		if (cur->type == matrix) {
-			a++;
-			if (a == index) {
-				printf("第%d个二维数组：\n", index);
-				print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
-				printf("\n");
-				return;
-			}
-		}
-		cur = cur->next;
+	cur = find_nth_matrix(state->head, index);
+	printf("第%d个二维数组：\n", index);
+	print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+	printf("\n");
+	return;
+}
+
+void cmd_array_sort(SystemState* state)
+{
+	assert(state != NULL);
+
+	if (state->stats.array1D_count < 1) {
+		printf("还没有一维数组，先创建一个吧\n");
+		return;
 	}
+
+	Node* cur;
+	if (state->stats.array1D_count == 1) {
+		cur = find_nth_array1D(state->head, 1);
+		if (cur == NULL) {
+			printf("数据有问题，退出吧\n");
+			return;
+		}
+
+		bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
+		printf("排序成功\n");
+		return;
+	}
+
+	int target;
+	printf("总共有%d个数组，选择一个进行排序（第几个）：", state->stats.array1D_count);
+	while (1) {
+		get_valid_int(&target);
+		if (target<1 || target>state->stats.array1D_count) {
+			printf("输入范围有问题，重新输入（第几个）：");
+			continue;
+		}
+
+		break;
+	}
+
+	cur = find_nth_array1D(state->head, target);
+	if (cur == NULL) {
+		printf("数据有问题，退出吧\n");
+		return;
+	}
+
+	bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
+	printf("排序成功\n");
+	return;
+}
+
+void cmd_inverse_matrix(SystemState* state)
+{
+
 }
 
 

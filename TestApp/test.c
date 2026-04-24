@@ -13,6 +13,7 @@ Command cmd[] = {
 	{"打印一个一维数组",cmd_print_array,has_array1D},
 	{"打印一个二维数组",cmd_print_array2D,has_array2D},
 	{"打印一个矩阵",cmd_print_matrix,has_matrix},
+	{"将一维数组按大小进行排序",cmd_array_sort,has_array1D},
 	{"计算一个方阵的行列式",cmd_calculate_det,has_matrix},
 	{"选择一个矩阵进行转置",cmd_matrix_transpose,has_matrix},
 	{ "退出",cmd_exit ,always_available}
