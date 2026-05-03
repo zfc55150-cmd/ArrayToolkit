@@ -17,7 +17,7 @@ typedef struct {
 }Array2D;
 
 typedef struct {
-	int** mat;
+	double** mat;
 	int row;
 	int col;
 }Matrix;

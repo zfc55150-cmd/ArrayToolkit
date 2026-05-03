@@ -209,7 +209,7 @@ void cmd_get_matrix(SystemState* state)
 
 	new_node->type = matrix;
 	get_array2D_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
-	new_node->data.matrix.mat = get_array2D(new_node->data.matrix.row, new_node->data.matrix.col);
+	new_node->data.matrix.mat = get_matrix(new_node->data.matrix.row, new_node->data.matrix.col);
 	if (new_node->data.matrix.mat == NULL) {
 		free(new_node);
 		return;
@@ -340,14 +340,14 @@ void cmd_matrix_transpose(SystemState* state)
 			return;
 		}
 
-		int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
+		double** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
 		if (temp != NULL) {
 			freeContiguousArray2D(cur->data.matrix.mat);
 			cur->data.matrix.mat = temp;
 			printf("矩阵转置成功!\n");
 		}
 		else {
-			printf("数组转置失败，转置函数返回值为NULL\n");
+			printf("矩阵转置失败，转置函数返回值为NULL\n");
 		}
 		return;
 	}
@@ -362,7 +362,7 @@ void cmd_matrix_transpose(SystemState* state)
 
 	cur = find_nth_matrix(state->head, target_mat);
 	if (cur != NULL) {
-		int** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
+		double** temp = transpose_matrix(cur->data.matrix.mat, &(cur->data.matrix.row), &(cur->data.matrix.col));
 		if (temp != NULL) {
 			freeContiguousArray2D(cur->data.matrix.mat);
 			cur->data.matrix.mat = temp;
@@ -391,7 +391,7 @@ void cmd_print_matrix(SystemState* state)
 	if (state->stats.matrix_count == 1) {
 		cur = find_nth_matrix(state->head, 1);
 		printf("唯一的一个矩阵：\n");
-		print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		print_matrix(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
 		printf("\n");
 		return;
 	}
@@ -405,7 +405,7 @@ void cmd_print_matrix(SystemState* state)
 
 	cur = find_nth_matrix(state->head, index);
 	printf("第%d个二维数组：\n", index);
-	print_array2D(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+	print_matrix(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
 	printf("\n");
 	return;
 }
@@ -453,6 +453,55 @@ void cmd_array_sort(SystemState* state)
 	bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
 	printf("排序成功\n");
 	return;
+}
+
+void cmd_matrix_rank(SystemState* state)
+{
+	assert(state != NULL);
+
+	if (state->stats.matrix_count < 1) {
+		printf("目前还没有矩阵，先创建一个吧\n");
+		return;
+	}
+
+	Node* cur;
+	if (state->stats.matrix_count == 1) {
+		cur = find_nth_matrix(state->head, 1);
+		if (cur != NULL) {
+			int rank = matrix_rank(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+			if (rank >= 0) printf("唯一一个的矩阵的秩为：%d\n", rank);
+
+			else printf("计算秩的函数返回值错误，检查一下吧\n");
+			return;
+		}
+
+		else {
+			printf("数据出问题了，退出吧\n");
+			return;
+		}
+	}
+
+	int target;
+	printf("有%d个矩阵，选择一个矩阵进行求秩(第几个):",state->stats.matrix_count);
+	get_valid_int(&target);
+	while (target <= 0 || target > state->stats.matrix_count) {
+		printf("输入范围有问题，重新输入:");
+		get_valid_int(&target);
+	}
+
+	cur = find_nth_matrix(state->head, target);
+	if (cur != NULL) {
+		int rank = matrix_rank(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		if (rank >= 0) printf("第%d个矩阵的秩为：%d\n",target, rank);
+
+		else printf("计算秩的函数返回值错误，检查一下吧\n");
+		return;
+	}
+
+	else {
+		printf("数据出问题了，退出吧\n");
+		return;
+	}
 }
 
 void cmd_inverse_matrix(SystemState* state)

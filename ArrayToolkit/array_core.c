@@ -9,7 +9,7 @@
 #include "array_core.h"
 
 #define FLT_EPSILON 1e-6
-#define DBL_EPSILON 1e-14
+#define EPS 1e-10
 
 //打印一维数组
 void print_array(int* arr, int a)
@@ -279,13 +279,13 @@ void matrix_search(int** mat, int row, int col)
 }
 
 //用来转置矩阵
-int** transpose_matrix(int** mat, int* row, int* col)
+double** transpose_matrix(double** mat, int* row, int* col)
 {
 	if (mat == NULL || row == NULL || col == NULL) {
 		return NULL;
 	}
 
-	int** mat2 = (int**)createContiguousArray2D(*col, *row, sizeof(int));
+	double** mat2 = (double**)createContiguousArray2D(*col, *row, sizeof(int));
 	if (mat2 == NULL) {
 		printf("转置辅助矩阵生成失败，转置失败\n");
 		return NULL;
@@ -306,8 +306,8 @@ int** transpose_matrix(int** mat, int* row, int* col)
 }
 
 //用来计算n阶行列式
-bool calculate_det(int** mat, int n, double* result)
-{ 
+bool calculate_det(double** mat, int n, double* result)
+{
 	//输入检测
 	assert(mat != NULL);
 	assert(n > 0);
@@ -325,7 +325,7 @@ bool calculate_det(int** mat, int n, double* result)
 
 	for (int a = 0; a < n; a++) {
 		for (int b = 0; b < n; b++) {
-			mat2[a][b] = (double)mat[a][b];
+			mat2[a][b] = mat[a][b];
 		}
 	}
 
@@ -341,7 +341,7 @@ bool calculate_det(int** mat, int n, double* result)
 			}
 		}
 
-		if (fabs(mat2[Maxrow][b]) < DBL_EPSILON) {
+		if (fabs(mat2[Maxrow][b]) < EPS) {
 			freeContiguousArray2D((void**)mat2);
 			*result = 0.0;
 			return true;
@@ -377,74 +377,185 @@ bool calculate_det(int** mat, int n, double* result)
 	return true;
 }
 
-int matrix_rank(int** mat, int row, int col)
+double** matrix_to_rowechelon(double** mat, int row, int col)
 {
-	int rank = row;
-	double** mat2 = (double**)createContiguouseArray2D(row, col, sizeof(double));
+	if (mat == NULL || row <= 0 || col <= 0) {
+		return NULL;
+	}
+
+	double** mat2 = (double**)createContiguousArray2D(row, col, sizeof(double));
+	if (mat2 == NULL) {
+		return NULL;
+	}
+
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			mat2[i][j] = mat[i][j];
+		}
+	}
+
+	int pivot_row = 0;
+	for (int j = 0; j < col && pivot_row < row; j++) {
+		int maxrow = pivot_row;
+		for (int i = pivot_row + 1; i < row; i++) {
+			if (fabs(mat2[i][j]) > fabs(mat2[maxrow][j])) {
+				maxrow = i;
+			}
+		}
+
+		if (fabs(mat2[maxrow][j]) < EPS) {
+			continue;
+		}
+
+		if (maxrow != pivot_row) {
+			for (int x = 0; x < col; x++) {
+				double temp = mat2[maxrow][x];
+				mat2[maxrow][x] = mat2[pivot_row][x];
+				mat2[pivot_row][x] = temp;
+			}
+		}
+
+		for (int i = pivot_row + 1; i < row; i++) {
+			double ratio = mat2[i][j] / mat2[pivot_row][j];
+			for (int k = j; k < col; k++) {
+				mat2[i][k] -= ratio * mat2[pivot_row][k];
+			}
+		}
+
+		pivot_row++;
+	}
+
+	return mat2;
+}
+
+int matrix_rank(double** mat, int row, int col)
+{
+	int rank = 0;
+	double** mat2 = matrix_to_rowechelon(mat, row, col);
 	if (mat2 == NULL) {
 		return -1;
 	}
 
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
-			mat2[i][j] = (double)mat[i][j];
+			if (fabs(mat2[i][j]) > EPS) {
+				rank++;
+				break;
+			}
 		}
 	}
 
-	for (int j = 0; j < col; j++) {
-		int maxrow = j;
-		for (int i = j+1; i < row; i++) {
-			if (fabs(mat2[i][j]) > fabs(mat2[maxrow][j])) {
-				maxrow = i;
-			}
-		}
-
-		if (fabs(mat2[maxrow][j]) < DBL_EPSILON) {
-			rank--;
-		}
-
-		/*if (maxrow != j) {
-			for (int a = 0; a < col; a++) {
-				double temp = mat2[maxrow][a];
-				mat2[maxrow][a] = mat2[j][a];
-				mat2[j][a] = temp;
-			}
-		}
-
-		for (int a = j+1; a < row; a++) {
-			double ratio = mat2[a][j] / mat2[j][j];
-			for (int b = j; b < col; b++) {
-				mat2[a][b] -= ratio * mat2[j][b];
-			}
-		}*/
-	}
-
+	freeContiguousArray2D(mat2);
 	return rank;
 }
 
-int** inverse_matrix(int** mat,int n)
+double** inverse_matrix(double** mat, int n)
 {
-	double result;
-	if (calculate_det(mat, n, &result) == false || result == 0.0) {
-		retrun NULL;
+	if (mat == NULL || n <= 0) {
+		return NULL;
 	}
 
-	int** temp = createContiguousArray2D(n, 2 * n, sizeof(int));
-	if (temp == NULL) {
+	//右添单位矩阵创建增广矩阵
+	double** mat2 = (double**)createContiguousArray2D(n, 2 * n, sizeof(double));
+	if (mat2 == NULL) {
 		return NULL;
 	}
 
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < 2 * n; j++) {
-			if (j >= n) {
-				if (j = n + i) temp[i][j] = 1;
-				else temp[i][j] = 0;
-			}
-			temp[i][j] = mat[i][j];
+		for (int j = 0; j < n; j++) {
+			mat2[i][j] = mat[i][j];
+		}
+
+		for (int j = 0; j < n; j++) {
+			mat2[i][j + n] = (i == j) ? 1.0 : 0.0;
 		}
 	}
 
+	mat2 = matrix_to_rowechelon(mat2, n, 2 * n);
+	int rank = matrix_rank(mat2, n, n);
 
+	if (rank < n) {
+		freeContiguousArray2D(mat2);
+		return NULL;
+	}
+
+	for (int i = 0; i < rank; i++) {
+		int pivot_col;
+		pivot_col = -1;
+		for (int j = 0; j < n; j++) {
+			if (fabs(mat2[i][j]) > EPS) {
+				pivot_col = j;
+				break;
+			}
+		}
+
+		if (pivot_col == -1) {
+			freeContiguousArray2D(mat2);
+			return NULL;
+		}
+
+		double ratio = mat2[i][pivot_col];
+		for (int j = pivot_col; j < 2 * n; j++) {
+			mat2[i][j] /= ratio;
+		}
+		mat2[i][pivot_col] = 1.0;
+	}
+
+	for (int i = rank - 1; i >= 0; i--) {
+		int pivot_col = -1;
+		for (int j = 0; j < n; j++) {
+			if (fabs(mat2[i][j]) > EPS) {
+				pivot_col = j;
+				break;
+			}
+		}
+
+		if (pivot_col == -1) {
+			freeContiguousArray2D(mat2);
+			return NULL;
+		}
+
+		for (int a = i - 1; a >= 0; a--) {
+			if (fabs(mat2[a][pivot_col]) < EPS) {
+				continue;
+			}
+
+			double ratio = mat2[a][pivot_col];
+			for (int b = pivot_col; b < 2 * n; b++) {
+				mat2[a][b] -= mat2[i][b] * ratio;
+			}
+			mat2[a][pivot_col] = 0.0;
+		}
+	}
+
+	double** mat3 = (double**)createContiguousArray2D(n, n, sizeof(double));
+	if (mat3 == NULL) {
+		freeContiguousArray2D(mat2);
+		return NULL;
+	}
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			mat3[i][j] = mat2[i][j + n];
+		}
+	}
+
+	freeContiguousArray2D(mat2);
+	return mat3;
 }
 
+void print_matrix(double** mat, int row, int col)
+{
+	int total = row * col;
+
+	for (int count = 0; count < total; count++)
+	{
+		printf("%.3lf\t", mat[count / col][count % col]);
+		if ((count + 1) % col == 0)
+		{
+			printf("\n");
+		}
+	}
+
+}
 

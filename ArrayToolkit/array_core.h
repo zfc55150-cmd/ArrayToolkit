@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-int** transpose_matrix(int** mat, int* row, int* col);  //返回新的矩阵指针（旧的内存记得自己释放）
+double** transpose_matrix(double** mat, int* row, int* col);  //返回新的矩阵指针（旧的内存记得自己释放）
 void array_linear_search(int* arr, int len);
 void array_search_ui(int* arr, int len);
 void print_array(int* arr, int x);
@@ -16,6 +16,8 @@ void select_sort(int* arr, int len);
 void print_array2D(int** mat, int row, int col);
 int* array2D_flat(int** mat, int row, int col);
 int** array2D_unflat(int* flat, int len,int* row,int* col);
-bool calculate_det(int** mat, int n,double* result);  //返回函数运行状态，计算结果存储在result中
+bool calculate_det(double** mat, int n,double* result);  //返回函数运行状态，计算结果存储在result中
+int matrix_rank(double** mat, int row, int col);
+void print_matrix(double** mat, int row, int col);
 
 #endif

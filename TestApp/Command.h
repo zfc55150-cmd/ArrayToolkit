@@ -20,5 +20,6 @@ void cmd_print_array2D(SystemState* state);
 void cmd_calculate_det(SystemState* state);
 void cmd_matrix_transpose(SystemState* state);
 void cmd_print_matrix(SystemState* state);
+void cmd_matrix_rank(SystemState* state);
 
 #endif

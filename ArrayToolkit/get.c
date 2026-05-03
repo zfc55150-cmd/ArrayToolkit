@@ -168,24 +168,22 @@ void get_shape_dimensions(int ndim, int* shape)
 	}
 }
 
-//用来获取二维数组的行列数
+//用来获取二维数组（矩阵）的行列数
 void get_array2D_dimensions(int* row, int* col)
 {
 	size_t cap, total;
 	do
 	{
-		printf("请输入二维数组有几行：\n");
+		printf("请输入二维数组(矩阵）有几行：\n");
 		get_valid_int(row);
-		while (*row <= 0)
-		{
+		while (*row <= 0){
 			printf("行数必须大于零，请重新输入：\n");
 			get_valid_int(row);
 		}
 
-		printf("请输入二维数组有几列：\n");
+		printf("请输入二维数组（矩阵）有几列：\n");
 		get_valid_int(col);
-		while (*col <= 0)
-		{
+		while (*col <= 0){
 			printf("列数必须大于零，请重新输入：\n");
 			get_valid_int(col);
 		}
