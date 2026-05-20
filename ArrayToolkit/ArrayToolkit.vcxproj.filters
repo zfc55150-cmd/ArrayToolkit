@@ -41,5 +41,8 @@
     <ClInclude Include="list.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="status.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

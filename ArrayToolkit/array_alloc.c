@@ -5,6 +5,7 @@
 
 #include "get.h"
 #include "array_alloc.h"
+#include "status.h"
 
 
 
@@ -334,7 +335,7 @@ int** get_array2D(int row, int col)
 	}
 }
 
-static MatrixInputStatus check_matrix_size(int row, int col, size_t* total, size_t* cap)
+static ATKStatus check_matrix_size(int row, int col, size_t* total, size_t* cap)
 {
 	if (total == NULL || cap == NULL) {
 		return Matrix_Input_NULL;
@@ -353,7 +354,7 @@ static MatrixInputStatus check_matrix_size(int row, int col, size_t* total, size
 	return Matrix_Input_OK;
 }
 
-static MatrixInputStatus parse_matrix_line(char* line, double** mat, int row, int col)
+static ATKStatus parse_matrix_line(char* line, double** mat, int row, int col)
 {
 	if (line == NULL || mat == NULL) {
 		return Matrix_Input_NULL;
@@ -396,7 +397,7 @@ static MatrixInputStatus parse_matrix_line(char* line, double** mat, int row, in
 	return Matrix_Input_OK;
 }
 
-static void print_matrix_input_error(MatrixInputStatus status)
+static void print_matrix_input_error(ATKStatus status)
 {
 	switch (status) {
 	case Matrix_Input_OK:
@@ -437,7 +438,7 @@ static void print_matrix_input_error(MatrixInputStatus status)
 	}
 }
 
-static MatrixInputStatus parse_matrix_row_line(char* line, double* mat_row, int col)
+static ATKStatus parse_matrix_row_line(char* line, double* mat_row, int col)
 {
 	if (line == NULL || mat_row == NULL) {
 		return Matrix_Input_NULL;
@@ -481,7 +482,7 @@ static MatrixInputStatus parse_matrix_row_line(char* line, double* mat_row, int 
 }
 
 //用于获取自定义的矩阵，但只支持一行输入
-MatrixInputStatus get_A_matrix(double*** output_mat, int row, int col)
+ATKStatus get_A_matrix(double*** output_mat, int row, int col)
 {
 	if (output_mat == NULL) {
 		return Matrix_Output_NULL;
@@ -490,7 +491,7 @@ MatrixInputStatus get_A_matrix(double*** output_mat, int row, int col)
 	*output_mat = NULL;
 
 	size_t total, cap;
-	MatrixInputStatus check_status = check_matrix_size(row, col, &total, &cap);
+	ATKStatus check_status = check_matrix_size(row, col, &total, &cap);
 	if (check_status != Matrix_Input_OK) {
 		return check_status;
 	}
@@ -534,7 +535,7 @@ MatrixInputStatus get_A_matrix(double*** output_mat, int row, int col)
 			
 		}
 
-		MatrixInputStatus parse_status = parse_matrix_line(buf, mat, row, col);
+		ATKStatus parse_status = parse_matrix_line(buf, mat, row, col);
 		if (parse_status == Matrix_Input_OK) break;
 		print_matrix_input_error(parse_status);
 		printf("请重新");
@@ -546,7 +547,7 @@ MatrixInputStatus get_A_matrix(double*** output_mat, int row, int col)
 }
 
 //用于获取自定义的二维数组，多行输入
-MatrixInputStatus get_B_matrix(double*** output_mat, int row, int col)
+ATKStatus get_B_matrix(double*** output_mat, int row, int col)
 {
 	if (output_mat == NULL) {
 		return Matrix_Output_NULL;
@@ -555,7 +556,7 @@ MatrixInputStatus get_B_matrix(double*** output_mat, int row, int col)
 	*output_mat = NULL;
 
 	size_t cap, total;
-	MatrixInputStatus status = check_matrix_size(row, col, &total, &cap);
+	ATKStatus status = check_matrix_size(row, col, &total, &cap);
 	if (status != Matrix_Input_OK) {
 		return status;
 	}
@@ -600,7 +601,7 @@ MatrixInputStatus get_B_matrix(double*** output_mat, int row, int col)
 			continue;
 		}
 
-		MatrixInputStatus parse_status = parse_matrix_row_line(buf, mat[x],col);
+		ATKStatus parse_status = parse_matrix_row_line(buf, mat[x],col);
 		if (parse_status == Matrix_Input_OK) x++;
 
 		else {

@@ -427,6 +427,8 @@ void cmd_array_sort(SystemState* state)
 			return;
 		}
 
+		prinf("if ascending?\n");
+		get_
 		bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
 		printf("排序成功\n");
 		return;
@@ -506,7 +508,29 @@ void cmd_matrix_rank(SystemState* state)
 
 void cmd_inverse_matrix(SystemState* state)
 {
+	assert(state != NULL);
+	if (state->stats.matrix_count < 1) {
+		printf("目前还没有矩阵，先创建一个吧\n");
+		return;
+	}
 
+	Node* cur;
+	if (state->stats.matrix_count == 1) {
+		cur = find_nth_matrix(state->head, 1);
+		if (cur != NULL) {
+			int rank = matrix_rank(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+			if (rank >= 0) printf("唯一一个的矩阵的秩为：%d\n", rank);
+
+			else printf("计算秩的函数返回值错误，检查一下吧\n");
+			return;
+		}
+
+		else {
+			printf("数据出问题了，退出吧\n");
+			return;
+		}
+	}
+	
 }
 
 

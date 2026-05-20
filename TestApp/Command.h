@@ -3,6 +3,7 @@
 
 #include "ArrayToolkit.h"
 
+
 void print_menu();
 void print_Command(Menu* menu,SystemState* state);
 bool always_available(const SystemState* head);

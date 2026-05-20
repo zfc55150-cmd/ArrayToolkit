@@ -29,6 +29,7 @@
     <ClInclude Include="array_core.h" />
     <ClInclude Include="get.h" />
     <ClInclude Include="list.h" />
+    <ClInclude Include="status.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

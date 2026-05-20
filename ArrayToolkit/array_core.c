@@ -3,10 +3,12 @@
 #include <limits.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
 
 #include "get.h"
 #include "array_alloc.h"
 #include "array_core.h"
+#include "status.h"
 
 #define FLT_EPSILON 1e-6
 #define EPS 1e-10
@@ -34,20 +36,19 @@ void reverse_array(int* arr, int len)
 }
 
 //两种冒泡排序，升序和降序
-void bubble_sort(int* arr, int len)
+ATKStatus bubble_sort(int* arr, int len,char* if_ascending)
 {
-	char choice;
-	printf("请选择升序还是降序\nA/a：升序\nB/b：降序\n");
-	get_twochoice(&choice);
+	if (arr == NULL) {
+		return Array_Input_NULL;
+	}
+	if (len <= 0) {
+		return Arrray_InvalidSize;
+	}
 
-	if (choice == 'A' || choice == 'a')
-	{
-		for (int a = 0; a < len - 1; a++)
-		{
-			for (int b = 0; b < len - a - 1; b++)
-			{
-				if (arr[b] > arr[b + 1])
-				{
+	if (strcmp(if_ascending, "yes") == 0 || strcmp(if_ascending, "Yes") == 0) {
+		for (int a = 0; a < len - 1; a++){
+			for (int b = 0; b < len - a - 1; b++){
+				if (arr[b] > arr[b + 1]){
 					int temp;
 					temp = arr[b];
 					arr[b] = arr[b + 1];
@@ -55,15 +56,14 @@ void bubble_sort(int* arr, int len)
 				}
 			}
 		}
+
+		return Funk_Op_OK;
 	}
-	else
-	{
-		for (int a = 0; a < len - 1; a++)
-		{
-			for (int b = 0; b < len - a - 1; b++)
-			{
-				if (arr[b] < arr[b + 1])
-				{
+
+	else if(strcmp(if_ascending, "no") == 0 || strcmp(if_ascending, "No") == 0){
+		for (int a = 0; a < len - 1; a++){
+			for (int b = 0; b < len - a - 1; b++){
+				if (arr[b] < arr[b + 1]){
 					int temp;
 					temp = arr[b];
 					arr[b] = arr[b + 1];
@@ -71,7 +71,11 @@ void bubble_sort(int* arr, int len)
 				}
 			}
 		}
+
+		return Funk_Op_OK;
 	}
+
+	return Funk_Param_Err;
 }
 
 //用于打印二维数组
@@ -285,7 +289,7 @@ double** transpose_matrix(double** mat, int* row, int* col)
 		return NULL;
 	}
 
-	double** mat2 = (double**)createContiguousArray2D(*col, *row, sizeof(int));
+	double** mat2 = (double**)createContiguousArray2D(*col, *row, sizeof(double));
 	if (mat2 == NULL) {
 		printf("转置辅助矩阵生成失败，转置失败\n");
 		return NULL;
@@ -377,13 +381,105 @@ bool calculate_det(double** mat, int n, double* result)
 	return true;
 }
 
-double** matrix_to_rowechelon(double** mat, int row, int col)
+ATKStatus matrix_to_rowechelon(double** mat, int row, int col)
 {
-	if (mat == NULL || row <= 0 || col <= 0) {
+	if (mat == NULL ) {
+		return Matrix_Input_NULL;
+	}
+
+	if (row <= 0 || col <= 0) {
+		return Matrix_InvalidSize;
+	}
+
+	int pivot_row = 0;
+	for (int j = 0; j < col && pivot_row < row; j++) {
+		int maxrow = pivot_row;
+		for (int i = pivot_row + 1; i < row; i++) {
+			if (fabs(mat[i][j]) > fabs(mat[maxrow][j])) {
+				maxrow = i;
+			}
+		}
+
+		if (fabs(mat[maxrow][j]) < EPS) {
+			continue;
+		}
+
+		if (maxrow != pivot_row) {
+			for (int x = 0; x < col; x++) {
+				double temp = mat[maxrow][x];
+				mat[maxrow][x] = mat[pivot_row][x];
+				mat[pivot_row][x] = temp;
+			}
+		}
+
+		for (int i = pivot_row + 1; i < row; i++) {
+			double ratio = mat[i][j] / mat[pivot_row][j];
+			for (int k = j; k < col; k++) {
+				mat[i][k] -= ratio * mat[pivot_row][k];
+			}
+		}
+
+		pivot_row++;
+	}
+
+	return Funk_Op_OK;
+}
+
+ATKStatus matrix_to_rowsimplest(double** mat, int row, int col)
+{
+	ATKStatus status = matrix_to_rowechelon(mat, row, col);
+	if (status != Funk_Op_OK) {
+		return status;
+	}
+
+	int rank = 0;
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < col; j++) {
+			if (fabs(mat[i][j]) > EPS) {
+				rank++;
+				break;
+			}
+		}
+	}
+
+	int pivot_row = rank - 1;
+	for (; pivot_row >= 0; pivot_row--) {
+		int pivot_col = 0;
+		for (; pivot_col < col; pivot_col++) {
+			if (fabs(mat[pivot_row][pivot_col]) > EPS) {
+				break;
+			}
+		}
+
+		for (int j = pivot_col+1; j < col; j++) {
+			mat[pivot_row][j] /= mat[pivot_row][pivot_col];
+		}
+		mat[pivot_row][pivot_col] = 1.0;
+
+		int cur_row = pivot_row - 1;
+		for (; cur_row >= 0; cur_row--) {
+			if (fabs(mat[cur_row][pivot_col]) > EPS) {
+				double ratio = mat[cur_row][pivot_col];
+				for (int j = pivot_col + 1; j < col; j++) {
+					mat[cur_row][j] -= ratio * mat[pivot_row][j];
+				}
+
+				mat[cur_row][pivot_col] = 0.0;
+			}
+		}
+
+	}
+
+	return Funk_Op_OK;
+}
+
+double** clone_matrix(double** mat, int row, int col) 
+{
+	if (mat == NULL || row < 0 || col <= 0) {
 		return NULL;
 	}
 
-	double** mat2 = (double**)createContiguousArray2D(row, col, sizeof(double));
+	double** mat2=(double**)createContiguousArray2D(row, col, sizeof(double));
 	if (mat2 == NULL) {
 		return NULL;
 	}
@@ -393,46 +489,21 @@ double** matrix_to_rowechelon(double** mat, int row, int col)
 			mat2[i][j] = mat[i][j];
 		}
 	}
-
-	int pivot_row = 0;
-	for (int j = 0; j < col && pivot_row < row; j++) {
-		int maxrow = pivot_row;
-		for (int i = pivot_row + 1; i < row; i++) {
-			if (fabs(mat2[i][j]) > fabs(mat2[maxrow][j])) {
-				maxrow = i;
-			}
-		}
-
-		if (fabs(mat2[maxrow][j]) < EPS) {
-			continue;
-		}
-
-		if (maxrow != pivot_row) {
-			for (int x = 0; x < col; x++) {
-				double temp = mat2[maxrow][x];
-				mat2[maxrow][x] = mat2[pivot_row][x];
-				mat2[pivot_row][x] = temp;
-			}
-		}
-
-		for (int i = pivot_row + 1; i < row; i++) {
-			double ratio = mat2[i][j] / mat2[pivot_row][j];
-			for (int k = j; k < col; k++) {
-				mat2[i][k] -= ratio * mat2[pivot_row][k];
-			}
-		}
-
-		pivot_row++;
-	}
-
+	
 	return mat2;
 }
 
 int matrix_rank(double** mat, int row, int col)
 {
 	int rank = 0;
-	double** mat2 = matrix_to_rowechelon(mat, row, col);
+	
+	double** mat2 = clone_matrix(mat, row, col);
 	if (mat2 == NULL) {
+		return -1;
+	}
+
+	ATKStatus status = matrix_to_rowechelon(mat2, row, col);
+	if (status !=Funk_Op_OK) {
 		return -1;
 	}
 
@@ -449,16 +520,20 @@ int matrix_rank(double** mat, int row, int col)
 	return rank;
 }
 
-double** inverse_matrix(double** mat, int n)
+ATKStatus inverse_matrix(double** mat, int n)
 {
-	if (mat == NULL || n <= 0) {
-		return NULL;
+	if (mat == NULL) {
+		return Matrix_Input_NULL;
+	}
+
+	if (n <= 0) {
+		return Matrix_InvalidSize;
 	}
 
 	//右添单位矩阵创建增广矩阵
 	double** mat2 = (double**)createContiguousArray2D(n, 2 * n, sizeof(double));
 	if (mat2 == NULL) {
-		return NULL;
+		return Matrix_Alloc_Failed;
 	}
 
 	for (int i = 0; i < n; i++) {
@@ -471,77 +546,25 @@ double** inverse_matrix(double** mat, int n)
 		}
 	}
 
-	mat2 = matrix_to_rowechelon(mat2, n, 2 * n);
-	int rank = matrix_rank(mat2, n, n);
-
-	if (rank < n) {
+	ATKStatus status=matrix_to_rowsimplest(mat2, n, 2 * n);
+	if (status != Funk_Op_OK) {
 		freeContiguousArray2D(mat2);
-		return NULL;
+		return status;
 	}
 
-	for (int i = 0; i < rank; i++) {
-		int pivot_col;
-		pivot_col = -1;
-		for (int j = 0; j < n; j++) {
-			if (fabs(mat2[i][j]) > EPS) {
-				pivot_col = j;
-				break;
-			}
-		}
-
-		if (pivot_col == -1) {
-			freeContiguousArray2D(mat2);
-			return NULL;
-		}
-
-		double ratio = mat2[i][pivot_col];
-		for (int j = pivot_col; j < 2 * n; j++) {
-			mat2[i][j] /= ratio;
-		}
-		mat2[i][pivot_col] = 1.0;
-	}
-
-	for (int i = rank - 1; i >= 0; i--) {
-		int pivot_col = -1;
-		for (int j = 0; j < n; j++) {
-			if (fabs(mat2[i][j]) > EPS) {
-				pivot_col = j;
-				break;
-			}
-		}
-
-		if (pivot_col == -1) {
-			freeContiguousArray2D(mat2);
-			return NULL;
-		}
-
-		for (int a = i - 1; a >= 0; a--) {
-			if (fabs(mat2[a][pivot_col]) < EPS) {
-				continue;
-			}
-
-			double ratio = mat2[a][pivot_col];
-			for (int b = pivot_col; b < 2 * n; b++) {
-				mat2[a][b] -= mat2[i][b] * ratio;
-			}
-			mat2[a][pivot_col] = 0.0;
-		}
-	}
-
-	double** mat3 = (double**)createContiguousArray2D(n, n, sizeof(double));
-	if (mat3 == NULL) {
+	if (fabs(mat2[n - 1][n - 1]) < EPS) {
 		freeContiguousArray2D(mat2);
-		return NULL;
+		return Matrix_Singular;
 	}
 
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			mat3[i][j] = mat2[i][j + n];
+			mat[i][j] = mat2[i][j + n];
 		}
 	}
 
 	freeContiguousArray2D(mat2);
-	return mat3;
+	return Funk_Op_OK;
 }
 
 void print_matrix(double** mat, int row, int col)
@@ -556,6 +579,5 @@ void print_matrix(double** mat, int row, int col)
 			printf("\n");
 		}
 	}
-
 }
 

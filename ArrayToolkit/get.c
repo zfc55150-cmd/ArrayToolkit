@@ -150,6 +150,18 @@ void get_valid_char(char* x)
 
 }
 
+void get_string(char* x) 
+{
+	char buf[100];
+	char* p = buf;
+
+	if (fgets(buf, sizeof(buf), stdin) == NULL) {
+		return;
+	}
+
+
+}
+
 void get_twochoice(char* x)
 {
 	get_valid_char(x);
