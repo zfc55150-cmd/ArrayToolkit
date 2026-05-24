@@ -17,6 +17,9 @@ Command cmd[] = {
 	{"计算一个方阵的行列式",cmd_calculate_det,has_matrix},
 	{"求一个矩阵的秩",cmd_matrix_rank,has_matrix},
 	{"选择一个矩阵进行转置",cmd_matrix_transpose,has_matrix},
+	{"选择一个方阵进行求逆",cmd_inverse_matrix,has_matrix},
+	{"选择一个矩阵将它化成行阶梯形",cmd_matrix_to_rowechelon,has_matrix},
+	{"选择一个矩阵将他化成行最简形",cmd_matrix_to_rowsimplest,has_matrix},
 	{ "退出",cmd_exit ,always_available}
 };
 

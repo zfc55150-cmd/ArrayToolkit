@@ -420,6 +420,7 @@ void cmd_array_sort(SystemState* state)
 	}
 
 	Node* cur;
+	char* if_ascending;
 	if (state->stats.array1D_count == 1) {
 		cur = find_nth_array1D(state->head, 1);
 		if (cur == NULL) {
@@ -427,10 +428,17 @@ void cmd_array_sort(SystemState* state)
 			return;
 		}
 
-		prinf("if ascending?\n");
-		get_
-		bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
-		printf("排序成功\n");
+		printf("if ascending?\n");
+		ATKStatus string_status=get_string(&if_ascending);
+		if (string_status != Funk_Op_OK) {
+			print_ATK_Err(string_status);
+			return;
+		}
+
+		ATKStatus sort_status = bubble_sort(cur->data.array1D.arr, cur->data.array1D.len, if_ascending);
+		if (sort_status == Funk_Op_OK) printf("排序成功\n");
+		else print_ATK_Err(sort_status);
+		free(if_ascending);
 		return;
 	}
 
@@ -451,9 +459,18 @@ void cmd_array_sort(SystemState* state)
 		printf("数据有问题，退出吧\n");
 		return;
 	}
+	
+	printf("if ascending?\n");
+	ATKStatus string_status = get_string(&if_ascending);
+	if (string_status != Funk_Op_OK) {
+		print_ATK_Err(string_status);
+		return;
+	}
 
-	bubble_sort(cur->data.array1D.arr, cur->data.array1D.len);
-	printf("排序成功\n");
+	ATKStatus sort_status=bubble_sort(cur->data.array1D.arr, cur->data.array1D.len,if_ascending);
+	if (sort_status == Funk_Op_OK) printf("排序成功\n");
+	else print_ATK_Err(sort_status);
+	free(if_ascending);
 	return;
 }
 
@@ -518,10 +535,12 @@ void cmd_inverse_matrix(SystemState* state)
 	if (state->stats.matrix_count == 1) {
 		cur = find_nth_matrix(state->head, 1);
 		if (cur != NULL) {
-			int rank = matrix_rank(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
-			if (rank >= 0) printf("唯一一个的矩阵的秩为：%d\n", rank);
-
-			else printf("计算秩的函数返回值错误，检查一下吧\n");
+			if (cur->data.matrix.row == cur->data.matrix.col) {
+				ATKStatus status = inverse_matrix(cur->data.matrix.mat, cur->data.matrix.row);
+				if (status!=Funk_Op_OK) print_ATK_Err(status);
+				return;
+			}
+			else printf("唯一的一个矩阵也不是方阵，没法求逆\n");
 			return;
 		}
 
@@ -531,6 +550,120 @@ void cmd_inverse_matrix(SystemState* state)
 		}
 	}
 	
+	int target;
+	printf("有%d个矩阵，选择将第几个矩阵进行求逆\n:", state->stats.matrix_count);
+	get_valid_int(&target);
+	while (target <= 0 || target > state->stats.matrix_count) {
+		printf("输入范围有问题，重新输入:");
+		get_valid_int(&target);
+	}
+
+	cur = find_nth_matrix(state->head, target);
+
+	if (cur != NULL) {
+		if (cur->data.matrix.row == cur->data.matrix.col) {
+			ATKStatus status = inverse_matrix(cur->data.matrix.mat, cur->data.matrix.row);
+			if (status != Funk_Op_OK) print_ATK_Err(status);
+			return;
+		}
+		else printf("该矩阵不是方阵，没法求逆\n");
+		return;
+	}
+
+	else {
+		printf("数据出问题了，退出吧\n");
+		return;
+	}
+}
+
+void cmd_matrix_to_rowechelon(SystemState* state)
+{
+	assert(state != NULL);
+	if (state->stats.matrix_count < 1) {
+		printf("no matrix\n");
+		return;
+	}
+
+	Node* cur;
+	if (state->stats.matrix_count == 1) {
+		cur = find_nth_matrix(state->head, 1);
+		if (cur == NULL) {
+			printf("data error\n");
+			return;
+		}
+
+		ATKStatus status= matrix_to_rowechelon(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		if (status != Funk_Op_OK) {
+			print_ATK_Err(status);
+		}
+
+		return;
+	}
+
+	int target;
+	printf("有%d个矩阵，选择将第几个矩阵化成行阶梯型:", state->stats.matrix_count);
+	get_valid_int(&target);
+	while (target <= 0 || target > state->stats.matrix_count) {
+		printf("输入范围有问题，重新输入:");
+		get_valid_int(&target);
+	}
+
+	cur = find_nth_matrix(state->head, target);
+	if (cur != NULL) {
+		ATKStatus status = matrix_to_rowechelon(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		if (status != Funk_Op_OK) {
+			print_ATK_Err(status);
+		}
+		return;
+	}
+
+	printf("数据出问题了，没有%d个矩阵的数据\n", target);
+	return;
+}
+
+void cmd_matrix_to_rowsimplest(SystemState* state)
+{
+	assert(state != NULL);
+	if (state->stats.matrix_count < 1) {
+		printf("no matrix\n");
+		return;
+	}
+
+	Node* cur;
+	if (state->stats.matrix_count == 1) {
+		cur = find_nth_matrix(state->head, 1);
+		if (cur == NULL) {
+			printf("data error\n");
+			return;
+		}
+
+		ATKStatus status = matrix_to_rowsimplest(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		if (status != Funk_Op_OK) {
+			print_ATK_Err(status);
+		}
+
+		return;
+	}
+
+	int target;
+	printf("有%d个矩阵，选择将第几个矩阵化成行最简型:", state->stats.matrix_count);
+	get_valid_int(&target);
+	while (target <= 0 || target > state->stats.matrix_count) {
+		printf("输入范围有问题，重新输入:");
+		get_valid_int(&target);
+	}
+
+	cur = find_nth_matrix(state->head, target);
+	if (cur != NULL) {
+		ATKStatus status = matrix_to_rowsimplest(cur->data.matrix.mat, cur->data.matrix.row, cur->data.matrix.col);
+		if (status != Funk_Op_OK) {
+			print_ATK_Err(status);
+		}
+		return;
+	}
+
+	printf("数据出问题了，没有%d个矩阵的数据\n", target);
+	return;
 }
 
 

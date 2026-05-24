@@ -33,6 +33,12 @@ void free_list(Node* head)
 			}
 		}
 
+		else if (cur->type == matrix) {
+			if (cur->data.matrix.mat != NULL) {
+				freeContiguousArray2D(cur->data.matrix.mat);
+			}
+		}
+
 		free(cur);
 		cur = temp;
 	}

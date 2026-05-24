@@ -5,7 +5,7 @@ typedef enum {
 	Funk_Op_OK = 0,
 	Funk_Param_Err,
 
-	Matrix_Input_OK = 0,
+	Matrix_Input_OK,
 	Matrix_InvalidSize,
 	Matrix_Alloc_Failed,
 	Matrix_Input_EOF,
@@ -20,7 +20,13 @@ typedef enum {
 
 	Array_Input_NULL,
 	Arrray_InvalidSize,
+
+	String_Input_NULL,
+	String_Alloc_Failed,
+	String_Input_EOF,
 	
 }ATKStatus;
+
+void print_ATK_Err(ATKStatus status);
 
 #endif

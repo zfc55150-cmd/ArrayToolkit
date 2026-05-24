@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "get.h"
+#include "status.h"
 
 char* skip_midspaces(char* x)
 {
@@ -150,16 +151,50 @@ void get_valid_char(char* x)
 
 }
 
-void get_string(char* x) 
+ATKStatus get_string(char** output)
 {
-	char buf[100];
-	char* p = buf;
+	int ch;
+	int len = 0;
+	int capacity = 16;
+	char* str = NULL;
+	char* temp = NULL;
 
-	if (fgets(buf, sizeof(buf), stdin) == NULL) {
-		return;
+	if (output == NULL) {
+		return String_Input_NULL;
 	}
 
+	*output = NULL;
 
+	str = (char*)malloc(capacity * sizeof(char));
+	if (str == NULL) {
+		return String_Alloc_Failed;
+	}
+
+	while ((ch = getchar()) != '\n' && ch != EOF) {
+		if (len + 1 >= capacity) {
+			capacity *= 2;
+
+			temp = (char*)realloc(str, capacity * sizeof(char));
+			if (temp == NULL) {
+				free(str);
+				return String_Alloc_Failed;
+			}
+
+			str = temp;
+		}
+
+		str[len++] = (char)ch;
+	}
+
+	if (ch == EOF && len == 0) {
+		free(str);
+		return String_Input_EOF;
+	}
+
+	str[len] = '\0';
+	*output = str;
+
+	return Funk_Op_OK;
 }
 
 void get_twochoice(char* x)

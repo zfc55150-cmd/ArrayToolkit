@@ -22,5 +22,8 @@ void cmd_calculate_det(SystemState* state);
 void cmd_matrix_transpose(SystemState* state);
 void cmd_print_matrix(SystemState* state);
 void cmd_matrix_rank(SystemState* state);
+void cmd_inverse_matrix(SystemState* state);
+void cmd_matrix_to_rowechelon(SystemState* state);
+void cmd_matrix_to_rowsimplest(SystemState* state);
 
 #endif
