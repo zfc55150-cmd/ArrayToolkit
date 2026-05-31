@@ -47,4 +47,5 @@ int main(void)
 			cmd[choice - 1].execute(&state);
 	}
 	printf("程序运行结束，正常退出\n");
+	free_list(state.head);
 }

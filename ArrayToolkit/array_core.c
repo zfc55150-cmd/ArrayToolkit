@@ -504,6 +504,7 @@ int matrix_rank(double** mat, int row, int col)
 
 	ATKStatus status = matrix_to_rowechelon(mat2, row, col);
 	if (status !=Funk_Op_OK) {
+		freeContiguousArray2D(mat2);
 		return -1;
 	}
 

@@ -532,7 +532,7 @@ ATKStatus get_A_matrix(double*** output_mat, int row, int col)
 			}
 			printf("输入内容过长,导致输入被截断了\n");
 			continue;
-			
+
 		}
 
 		ATKStatus parse_status = parse_matrix_line(buf, mat, row, col);
@@ -597,11 +597,11 @@ ATKStatus get_B_matrix(double*** output_mat, int row, int col)
 				freeContiguousArray2D(mat);
 				return Matrix_Input_EOF;
 			}
-			printf("输入长度过长，请重新输入第%d行\n",x+1);
+			printf("输入长度过长，请重新输入第%d行\n", x + 1);
 			continue;
 		}
 
-		ATKStatus parse_status = parse_matrix_row_line(buf, mat[x],col);
+		ATKStatus parse_status = parse_matrix_row_line(buf, mat[x], col);
 		if (parse_status == Matrix_Input_OK) x++;
 
 		else {
@@ -641,6 +641,10 @@ double** get_matrix(int row, int col)
 //用于创建一个连续存储的二维数组
 void** createContiguousArray2D(int row, int col, size_t element_size)
 {
+	if (row <= 0 || col <= 0 || element_size= < 0) {
+		return NULL;
+	}
+
 	//生成二维数组的行指针
 	void** mat = (void**)malloc((size_t)row * sizeof(void*));
 	if (mat == NULL) {
