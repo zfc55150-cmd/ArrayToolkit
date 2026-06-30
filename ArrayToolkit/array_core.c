@@ -312,11 +312,6 @@ double** transpose_matrix(double** mat, int* row, int* col)
 //用来计算n阶行列式
 bool calculate_det(double** mat, int n, double* result)
 {
-	//输入检测
-	assert(mat != NULL);
-	assert(n > 0);
-	assert(result != NULL);
-
 	if (mat == NULL || n <= 0 || result == NULL) {
 		return false;
 	}

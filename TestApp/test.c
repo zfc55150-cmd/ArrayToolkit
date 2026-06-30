@@ -41,6 +41,7 @@ int main(void)
 			print_Command(&menu, &state);
 			get_valid_int(&choice);
 			while (choice <= 0 || choice > len||!(menu.cmd[choice-1].is_available(&state))) {
+				printf("输入不正确，重新选择\n");
 				print_Command(&menu, &state);
 				get_valid_int(&choice);
 			}

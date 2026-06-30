@@ -641,18 +641,34 @@ double** get_matrix(int row, int col)
 //用于创建一个连续存储的二维数组
 void** createContiguousArray2D(int row, int col, size_t element_size)
 {
-	if (row <= 0 || col <= 0 || element_size= < 0) {
+	if (row <= 0 || col <= 0 || element_size == 0) {
+		return NULL;
+	}
+
+	size_t rows = (size_t)row;
+	size_t cols = (size_t)col;
+	size_t max_size = (size_t)-1;
+	if (rows > max_size / sizeof(void*)) {
+		return NULL;
+	}
+
+	if (cols > max_size / element_size) {
+		return NULL;
+	}
+
+	size_t row_size = cols * element_size;
+	if (rows > max_size / row_size) {
 		return NULL;
 	}
 
 	//生成二维数组的行指针
-	void** mat = (void**)malloc((size_t)row * sizeof(void*));
+	void** mat = (void**)malloc(rows * sizeof(void*));
 	if (mat == NULL) {
 		return NULL;
 	}
 
 	//生成二维数组的总内存
-	char* data = (char*)malloc((size_t)row * col * element_size);
+	char* data = (char*)malloc(rows * row_size);
 	if (data == NULL) {
 		free(mat);
 		return NULL;
@@ -660,7 +676,7 @@ void** createContiguousArray2D(int row, int col, size_t element_size)
 
 	//将申请到的内存按列数切分，计算并设置第一行到最后一行的起始地址
 	for (int a = 0; a < row; a++) {
-		mat[a] = (void*)(data + a * col * element_size);
+		mat[a] = (void*)(data + (size_t)a * row_size);
 	}
 
 	return mat;

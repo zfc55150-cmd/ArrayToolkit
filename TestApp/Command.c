@@ -80,7 +80,10 @@ void state_tail_insert(SystemState* state, Node* new_node)
 void cmd_get_array(SystemState* state)
 {
 	Node* new_node = INIT_OBJ(Node);
-	assert(new_node != NULL);
+	if (new_node == NULL) {
+		printf("节点内存分配失败\n");
+		return;
+	}
 
 	new_node->type = Array_1D;
 	new_node->data.array1D.arr = get_array(&(new_node->data.array1D.len));
@@ -96,7 +99,10 @@ void cmd_get_array(SystemState* state)
 void cmd_get_array2D(SystemState* state)
 {
 	Node* new_node = INIT_OBJ(Node);
-	assert(new_node != NULL);
+	if (new_node == NULL) {
+		printf("节点内存分配失败\n");
+		return;
+	}
 
 	new_node->type = Array_2D;
 	get_array2D_dimensions(&(new_node->data.array2D.row), &(new_node->data.array2D.col));
@@ -205,7 +211,10 @@ void cmd_print_array(SystemState* state)
 void cmd_get_matrix(SystemState* state)
 {
 	Node* new_node = INIT_OBJ(Node);
-	assert(new_node != NULL);
+	if (new_node == NULL) {
+		printf("节点内存分配失败\n");
+		return;
+	}
 
 	new_node->type = matrix;
 	get_array2D_dimensions(&(new_node->data.matrix.row), &(new_node->data.matrix.col));
